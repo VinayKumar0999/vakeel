@@ -23,3 +23,40 @@ body {
 .nav-bar-options {
   justify-content: end;
 }
+
+.container-wrapper-nav {
+  max-width: none;
+}
+
+.service-card {
+  background-color: #ededed;
+}
+
+.service-title {
+  font-weight: 700;
+  padding-bottom: 20px;
+}
+
+.appointment-wrapper {
+  background-color: #c2cdde;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px;
+}
+
+.d-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  max-width: 1440px;
+}
+
+.slick-slider {
+  width: 100% !important;
+}
