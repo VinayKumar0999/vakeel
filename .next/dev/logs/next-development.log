@@ -1,0 +1,437 @@
+[00:00:01.372] Server  LOG      ✓ Ready in 777ms
+[00:03:00.502] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:53.598] Server  LOG      ✓ Compiled in 129ms
+[00:04:24.143] Server  LOG      ✓ Compiled in 106ms
+[00:04:41.162] Server  LOG      ✓ Compiled in 108ms
+[00:07:01.155] Server  LOG      ✓ Compiled in 113ms
+[00:07:22.096] Server  LOG      ✓ Compiled in 104ms
+[00:07:59.689] Server  LOG      ✓ Compiled in 92ms
+[00:08:06.791] Server  LOG      ✓ Compiled in 70ms
+[00:08:13.504] Server  LOG      ✓ Compiled in 93ms
+[00:08:25.333] Server  LOG      ✓ Compiled in 150ms
+[00:08:43.115] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:08:43.342] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/login" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en">
+                          <body
+-                           cz-shortcut-listen="true"
+                          >
+                            <Header>
+                              <header
++                               className="sticky top-0 z-50 w-full border-b bg-white/95 supports-[backdrop-filter]:bg..."
+-                               className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backd..."
+                              >
+                                <div
++                                 className="container"
+-                                 className="container mx-auto px-4"
+                                >
+                                  <div
++                                   className={"flex h-16 items-center justify-between "}
+-                                   className="flex h-16 items-center justify-between"
+                                  >
+                                    <nav
++                                     className="bg-white/80 backdrop-blur-md border-b h-full flex items-center space-..."
+-                                     className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50"
+                                    >
+                                      <div
++                                       className="max-w-7xl mx-auto px-6 py-4 w-full"
+-                                       className="max-w-7xl mx-auto px-6 py-4"
+                                      >
+                                    ...
+                            ...
+                  ...
+
+[00:09:51.650] Server  LOG      ✓ Compiled in 105ms
+[00:10:08.319] Server  LOG      ✓ Compiled in 91ms
+[00:10:31.679] Server  LOG      ✓ Compiled in 152ms
+[00:13:35.448] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:13:35.627] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/login" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en">
+                          <body
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[00:13:38.156] Server  LOG      ✓ Compiled in 94ms
+[00:15:10.308] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:15:10.493] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/lawyers" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en">
+                          <body
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[00:15:20.865] Server  ERROR    ⨯ ./app/lawers/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Search, SlidersHorizontal, MapPin, Star, Video, Clock, ChevronDown, X, Filter } from 'lucide-react';
+  3 |
+  4 | export default function LawyerListingPage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+
+[00:15:20.992] Browser ERROR   ./app/lawers/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Search, SlidersHorizontal, MapPin, Star, Video, Clock, ChevronDown, X, Filter } from 'lucide-react';
+  3 |
+  4 | export default function LawyerListingPage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:15:21.440] Browser ERROR   ./app/lawers/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Search, SlidersHorizontal, MapPin, Star, Video, Clock, ChevronDown, X, Filter } from 'lucide-react';
+  3 |
+  4 | export default function LawyerListingPage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:15:21.440] Browser ERROR   ./app/lawers/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Search, SlidersHorizontal, MapPin, Star, Video, Clock, ChevronDown, X, Filter } from 'lucide-react';
+  3 |
+  4 | export default function LawyerListingPage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:15:21.836] Browser ERROR   uncaughtError: Error: ./app/lawers/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Search, SlidersHorizontal, MapPin, Star, Video, Clock, ChevronDown, X, Filter } from 'lucide-react';
+  3 |
+  4 | export default function LawyerListingPage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+
+[00:15:21.951] Browser ERROR   ./app/lawers/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Search, SlidersHorizontal, MapPin, Star, Video, Clock, ChevronDown, X, Filter } from 'lucide-react';
+  3 |
+  4 | export default function LawyerListingPage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:15:22.053] Browser ERROR   ./app/lawers/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Search, SlidersHorizontal, MapPin, Star, Video, Clock, ChevronDown, X, Filter } from 'lucide-react';
+  3 |
+  4 | export default function LawyerListingPage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:15:35.778] Server  LOG      ✓ Compiled in 86ms
+[00:15:36.504] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:16:01.055] Server  LOG      ✓ Compiled in 83ms
+[00:16:59.083] Server  LOG      ✓ Compiled in 97ms
+[00:17:07.308] Server  LOG      ✓ Compiled in 138ms
+[00:17:42.519] Server  LOG      ✓ Compiled in 92ms
+[00:17:49.393] Server  LOG      ✓ Compiled in 87ms
+[00:17:54.511] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:54.806] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/lawers" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en">
+                          <body
+-                           cz-shortcut-listen="true"
+                          >
+                  ...
+
+[00:17:56.462] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:18:06.563] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:19:04.701] Server  WARN    Error: Route "/lawers/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:19:04.990] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:19:05.330] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:19:05.330] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:19:05.330] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:19:05.330] Browser ERROR   Failed to load lawyer {"code":"ERR_NETWORK","config":{"adapter":["xhr","http","fetch"],"allowAbsoluteUrls":true,"baseURL":"http://localhost:8080/api","env":{},"headers":{"Accept":"application/json, text/plain, */*","Content-Type":"application/json"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":0,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/lawyers/undefined","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"Network Error","name":"AxiosError","stack":"AxiosError: Network Error\n    at XMLHttpRequest.handleError (http://localhost:3000/_next/static/chunks/node_modules_54b1fb4e._.js:4149:25)\n    at Axios.request (http://localhost:3000/_next/static/chunks/node_modules_54b1fb4e._.js:4907:49)\n    at async fetchLawyer (http://localhost:3000/_next/static/chunks/_26008a22._.js:215:33)"}
+[00:19:05.330] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:19:05.330] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:19:05.330] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:19:05.330] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:19:05.330] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:19:45.237] Server  ERROR    ⨯ ./app/lawers/[id]/page.tsx:194:17
+Ecmascript file had an error
+  192 | //   );
+  193 | // }
+> 194 | import React, { useState } from 'react';
+      |                 ^^^^^^^^
+  195 | import { MapPin, Star, Award, Briefcase, Clock, Video, MessageCircle, Share2, Heart, CheckCircle, Calendar, Languages, GraduationCap, Shield } from 'lucide-react';
+  196 |
+  197 | export default function LawyerProfilePage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+
+[00:19:45.281] Server  LOG      ✓ Compiled in 164ms
+[00:19:45.451] Browser ERROR   uncaughtError: Error: ./app/lawers/[id]/page.tsx:194:17
+Ecmascript file had an error
+  192 | //   );
+  193 | // }
+> 194 | import React, { useState } from 'react';
+      |                 ^^^^^^^^
+  195 | import { MapPin, Star, Award, Briefcase, Clock, Video, MessageCircle, Share2, Heart, CheckCircle, Calendar, Languages, GraduationCap, Shield } from 'lucide-react';
+  196 |
+  197 | export default function LawyerProfilePage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+
+[00:19:46.517] Browser ERROR   ./app/lawers/[id]/page.tsx:194:17
+Ecmascript file had an error
+  192 | //   );
+  193 | // }
+> 194 | import React, { useState } from 'react';
+      |                 ^^^^^^^^
+  195 | import { MapPin, Star, Award, Briefcase, Clock, Video, MessageCircle, Share2, Heart, CheckCircle, Calendar, Languages, GraduationCap, Shield } from 'lucide-react';
+  196 |
+  197 | export default function LawyerProfilePage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:19:46.517] Browser ERROR   ./app/lawers/[id]/page.tsx:194:17
+Ecmascript file had an error
+  192 | //   );
+  193 | // }
+> 194 | import React, { useState } from 'react';
+      |                 ^^^^^^^^
+  195 | import { MapPin, Star, Award, Briefcase, Clock, Video, MessageCircle, Share2, Heart, CheckCircle, Calendar, Languages, GraduationCap, Shield } from 'lucide-react';
+  196 |
+  197 | export default function LawyerProfilePage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:19:46.517] Browser ERROR   ./app/lawers/[id]/page.tsx:194:17
+Ecmascript file had an error
+  192 | //   );
+  193 | // }
+> 194 | import React, { useState } from 'react';
+      |                 ^^^^^^^^
+  195 | import { MapPin, Star, Award, Briefcase, Clock, Video, MessageCircle, Share2, Heart, CheckCircle, Calendar, Languages, GraduationCap, Shield } from 'lucide-react';
+  196 |
+  197 | export default function LawyerProfilePage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:19:46.517] Browser ERROR   ./app/lawers/[id]/page.tsx:194:17
+Ecmascript file had an error
+  192 | //   );
+  193 | // }
+> 194 | import React, { useState } from 'react';
+      |                 ^^^^^^^^
+  195 | import { MapPin, Star, Award, Briefcase, Clock, Video, MessageCircle, Share2, Heart, CheckCircle, Calendar, Languages, GraduationCap, Shield } from 'lucide-react';
+  196 |
+  197 | export default function LawyerProfilePage() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:19:58.494] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:21:43.688] Server  LOG      ✓ Compiled in 116ms
+[00:24:35.328] Server  ERROR    ⨯ ./app/consultation/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Calendar, Clock, FileText, CreditCard, CheckCircle, Upload, X, ChevronRight, ChevronLeft } from 'lucide-react';
+  3 |
+  4 | export default function BookingFlow() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+
+[00:24:35.611] Browser ERROR   uncaughtError: Error: ./app/consultation/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Calendar, Clock, FileText, CreditCard, CheckCircle, Upload, X, ChevronRight, ChevronLeft } from 'lucide-react';
+  3 |
+  4 | export default function BookingFlow() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+
+
+
+
+[00:24:35.847] Browser ERROR   ./app/consultation/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Calendar, Clock, FileText, CreditCard, CheckCircle, Upload, X, ChevronRight, ChevronLeft } from 'lucide-react';
+  3 |
+  4 | export default function BookingFlow() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:24:35.849] Browser ERROR   ./app/consultation/page.tsx:1:17
+Ecmascript file had an error
+> 1 | import React, { useState } from 'react';
+    |                 ^^^^^^^^
+  2 | import { Calendar, Clock, FileText, CreditCard, CheckCircle, Upload, X, ChevronRight, ChevronLeft } from 'lucide-react';
+  3 |
+  4 | export default function BookingFlow() {
+
+You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
+
+ Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
+[00:24:51.491] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:25:10.127] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:25:11.597] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:25:16.179] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:25:31.508] Server  LOG      ✓ Compiled in 115ms
