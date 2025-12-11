@@ -90,3 +90,5 @@ You're importing a component that needs `useState`. This React Hook only works i
  Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
 [00:03:47.082] Server  LOG      ✓ Compiled in 132ms
 [00:03:47.573] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:06:14.248] Server  LOG      ✓ Compiled in 196ms
+[00:06:15.541] Server  LOG      ✓ Compiled in 178ms
