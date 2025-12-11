@@ -1,129 +1,15 @@
-[00:00:00.819] Server  LOG      ✓ Ready in 551ms
-[00:00:17.991] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:21.327] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:21.712] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="layout.tsx">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <script>
-                      <script>
-                      <RootLayout>
-                        <html lang="en">
-                          <body
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[00:02:30.541] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:02:30.727] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/lawers" notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="layout.tsx">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <script>
-                      <script>
-                      <RootLayout>
-                        <html lang="en">
-                          <body
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[00:02:45.494] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:02:59.685] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:15:49.691] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:16:06.648] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[05:39:13.689] Server  LOG      ✓ Compiled in 212ms
-[05:39:52.042] Server  LOG      ✓ Compiled in 173ms
-[05:40:09.540] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[05:40:09.747] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="layout.tsx">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <script>
-                      <script>
-                      <RootLayout>
-                        <html lang="en">
-                          <body
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[05:40:21.147] Server  ERROR    ⨯ ./app/dashboard/lawyer/page.tsx:1:17
+[00:00:00.759] Server  LOG      ✓ Ready in 505ms
+[00:00:09.248] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:17.831] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:32.028] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:03:10.395] Server  LOG      ✓ Compiled in 295ms
+[00:03:34.719] Server  ERROR    ⨯ ./app/consultation/room/page.tsx:1:17
 Ecmascript file had an error
 > 1 | import React, { useState } from 'react';
     |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
+  2 | import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor, MessageCircle, FileText, Upload, Settings, Maximize, Volume2, VolumeX, MoreVertical, Download, X, Send, Minimize } from 'lucide-react';
   3 |
-  4 | export default function LawyerDashboard() {
+  4 | export default function VideoConsultationRoom() {
 
 You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
 
@@ -132,46 +18,46 @@ You're importing a component that needs `useState`. This React Hook only works i
 
 
 
-[05:40:21.276] Browser ERROR   ./app/dashboard/lawyer/page.tsx:1:17
+[00:03:34.850] Browser ERROR   ./app/consultation/room/page.tsx:1:17
 Ecmascript file had an error
 > 1 | import React, { useState } from 'react';
     |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
+  2 | import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor, MessageCircle, FileText, Upload, Settings, Maximize, Volume2, VolumeX, MoreVertical, Download, X, Send, Minimize } from 'lucide-react';
   3 |
-  4 | export default function LawyerDashboard() {
+  4 | export default function VideoConsultationRoom() {
 
 You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
 
  Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
-[05:40:21.963] Browser ERROR   ./app/dashboard/lawyer/page.tsx:1:17
+[00:03:35.351] Browser ERROR   ./app/consultation/room/page.tsx:1:17
 Ecmascript file had an error
 > 1 | import React, { useState } from 'react';
     |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
+  2 | import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor, MessageCircle, FileText, Upload, Settings, Maximize, Volume2, VolumeX, MoreVertical, Download, X, Send, Minimize } from 'lucide-react';
   3 |
-  4 | export default function LawyerDashboard() {
+  4 | export default function VideoConsultationRoom() {
 
 You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
 
  Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
-[05:40:22.063] Browser ERROR   ./app/dashboard/lawyer/page.tsx:1:17
+[00:03:35.352] Browser ERROR   ./app/consultation/room/page.tsx:1:17
 Ecmascript file had an error
 > 1 | import React, { useState } from 'react';
     |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
+  2 | import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor, MessageCircle, FileText, Upload, Settings, Maximize, Volume2, VolumeX, MoreVertical, Download, X, Send, Minimize } from 'lucide-react';
   3 |
-  4 | export default function LawyerDashboard() {
+  4 | export default function VideoConsultationRoom() {
 
 You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
 
  Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
-[05:40:22.820] Browser ERROR   uncaughtError: Error: ./app/dashboard/lawyer/page.tsx:1:17
+[00:03:35.690] Browser ERROR   uncaughtError: Error: ./app/consultation/room/page.tsx:1:17
 Ecmascript file had an error
 > 1 | import React, { useState } from 'react';
     |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
+  2 | import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor, MessageCircle, FileText, Upload, Settings, Maximize, Volume2, VolumeX, MoreVertical, Download, X, Send, Minimize } from 'lucide-react';
   3 |
-  4 | export default function LawyerDashboard() {
+  4 | export default function VideoConsultationRoom() {
 
 You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
 
@@ -180,97 +66,27 @@ You're importing a component that needs `useState`. This React Hook only works i
 
 
 
-[05:40:23.002] Browser ERROR   ./app/dashboard/lawyer/page.tsx:1:17
+[00:03:35.865] Browser ERROR   ./app/consultation/room/page.tsx:1:17
 Ecmascript file had an error
 > 1 | import React, { useState } from 'react';
     |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
+  2 | import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor, MessageCircle, FileText, Upload, Settings, Maximize, Volume2, VolumeX, MoreVertical, Download, X, Send, Minimize } from 'lucide-react';
   3 |
-  4 | export default function LawyerDashboard() {
+  4 | export default function VideoConsultationRoom() {
 
 You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
 
  Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
-[05:40:23.002] Browser ERROR   ./app/dashboard/lawyer/page.tsx:1:17
+[00:03:35.865] Browser ERROR   ./app/consultation/room/page.tsx:1:17
 Ecmascript file had an error
 > 1 | import React, { useState } from 'react';
     |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
+  2 | import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor, MessageCircle, FileText, Upload, Settings, Maximize, Volume2, VolumeX, MoreVertical, Download, X, Send, Minimize } from 'lucide-react';
   3 |
-  4 | export default function LawyerDashboard() {
+  4 | export default function VideoConsultationRoom() {
 
 You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
 
  Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
-[05:41:01.313] Browser ERROR   ./app/dashboard/lawyer/page.tsx:1:17
-Ecmascript file had an error
-> 1 | import React, { useState } from 'react';
-    |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
-  3 |
-  4 | export default function LawyerDashboard() {
-
-You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
-
- Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
-[05:41:03.814] Browser ERROR   ./app/dashboard/lawyer/page.tsx:1:17
-Ecmascript file had an error
-> 1 | import React, { useState } from 'react';
-    |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
-  3 |
-  4 | export default function LawyerDashboard() {
-
-You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
-
- Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
-[05:41:12.426] Browser ERROR   ./app/dashboard/lawyer/page.tsx:1:17
-Ecmascript file had an error
-> 1 | import React, { useState } from 'react';
-    |                 ^^^^^^^^
-  2 | import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
-  3 |
-  4 | export default function LawyerDashboard() {
-
-You're importing a component that needs `useState`. This React Hook only works in a Client Component. To fix, mark the file (or its parent) with the `"use client"` directive.
-
- Learn more: https://nextjs.org/docs/app/api-reference/directives/use-client
-[05:41:30.198] Server  LOG      ✓ Compiled in 163ms
-[05:41:30.728] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[05:41:30.890] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/dashboard..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="layout.tsx">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <script>
-                      <script>
-                      <RootLayout>
-                        <html lang="en">
-                          <body
--                           cz-shortcut-listen="true"
-                          >
-                  ...
-
-[06:03:07.705] Server  LOG      ✓ Compiled in 1185ms
+[00:03:47.082] Server  LOG      ✓ Compiled in 132ms
+[00:03:47.573] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

@@ -1,442 +1,351 @@
-"use client";
+"use client"
 import React, { useState } from 'react';
-import { Calendar, Clock, FileText, CreditCard, CheckCircle, Upload, X, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Video, VideoOff, Mic, MicOff, PhoneOff, Monitor, MessageCircle, FileText, Upload, Settings, Maximize, Volume2, VolumeX, MoreVertical, Download, X, Send, Minimize } from 'lucide-react';
 
-export default function BookingFlow() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [selectedDate, setSelectedDate] = useState<any>(null);
-  const [selectedSlot, setSelectedSlot] = useState<any>(null);
-  const [description, setDescription] = useState<any>('');
-  const [uploadedFiles, setUploadedFiles] = useState<any>([]);
-  const [agreed, setAgreed] = useState(false);
+export default function VideoConsultationRoom() {
+  const [isVideoOn, setIsVideoOn] = useState(true);
+  const [isAudioOn, setIsAudioOn] = useState(true);
+  const [isSpeakerOn, setIsSpeakerOn] = useState(true);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [showChat, setShowChat] = useState(true);
+  const [showDocuments, setShowDocuments] = useState(false);
+  const [chatMessage, setChatMessage] = useState('');
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
-  const steps = [
-    { number: 1, title: 'Date & Time', icon: Calendar },
-    { number: 2, title: 'Details', icon: FileText },
-    { number: 3, title: 'Review', icon: CheckCircle },
-    { number: 4, title: 'Payment', icon: CreditCard }
+  const consultation = {
+    lawyer: {
+      name: "Adv. Rajesh Kumar",
+      photo: "👨‍⚖️",
+      expertise: "Corporate & Property Law"
+    },
+    client: {
+      name: "Amit Sharma",
+      photo: "👤"
+    },
+    duration: 30,
+    timeElapsed: 12,
+    scheduledEnd: "04:30 PM"
+  };
+
+  const chatMessages = [
+    { id: 1, sender: 'client', name: 'You', message: 'Hello, thank you for joining!', time: '04:01 PM' },
+    { id: 2, sender: 'lawyer', name: 'Adv. Rajesh Kumar', message: 'Good afternoon! How can I help you today?', time: '04:01 PM' },
+    { id: 3, sender: 'client', name: 'You', message: 'I need advice on a property purchase agreement.', time: '04:02 PM' },
+    { id: 4, sender: 'lawyer', name: 'Adv. Rajesh Kumar', message: 'Sure, please share the document and I\'ll review it with you.', time: '04:03 PM' }
   ];
 
-  const lawyer = {
-    name: "Adv. Rajesh Kumar",
-    photo: "👨‍⚖️",
-    expertise: "Corporate & Property Law",
-    fee: 1500,
-    duration: 30
-  };
-
-  const dates = [
-    { date: '2024-12-04', day: 'Today', available: true },
-    { date: '2024-12-05', day: 'Tomorrow', available: true },
-    { date: '2024-12-06', day: 'Dec 6', available: true },
-    { date: '2024-12-07', day: 'Dec 7', available: false },
-    { date: '2024-12-08', day: 'Dec 8', available: true }
+  const documents = [
+    { id: 1, name: 'Property_Agreement.pdf', size: '2.4 MB', uploadedBy: 'client' },
+    { id: 2, name: 'Legal_Checklist.pdf', size: '890 KB', uploadedBy: 'lawyer' }
   ];
 
-  const timeSlots = {
-    morning: ['09:00 AM', '10:00 AM', '11:00 AM'],
-    afternoon: ['02:00 PM', '03:00 PM', '04:00 PM'],
-    evening: ['05:00 PM', '06:00 PM']
+  const formatTime = (minutes:any) => {
+    const mins = Math.floor(minutes);
+    const secs = Math.floor((minutes - mins) * 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleFileUpload = (e:any) => {
-    const files = Array.from(e.target.files);
-    setUploadedFiles([...uploadedFiles, ...files]);
-  };
-
-  const removeFile = (index:any) => {
-    setUploadedFiles(uploadedFiles.filter((_:any, i:any) => i !== index));
-  };
-
-  const canProceed = () => {
-    if (currentStep === 1) return selectedDate && selectedSlot;
-    if (currentStep === 2) return description.trim().length > 0;
-    if (currentStep === 3) return agreed;
-    return true;
-  };
+  const timeRemaining = consultation.duration - consultation.timeElapsed;
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <nav className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold text-blue-900">Vakeel Kutami</div>
-            <button className="text-slate-600 hover:text-slate-900">Cancel Booking</button>
-          </div>
-        </div>
-      </nav>
-
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between relative">
-            {/* Progress Line */}
-            <div className="absolute top-5 left-0 right-0 h-1 bg-slate-200 -z-10">
-              <div
-                className="h-full bg-blue-900 transition-all duration-500"
-                style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
-              ></div>
+    <div className="h-screen bg-slate-900 flex flex-col">
+      {/* Top Bar */}
+      <div className="bg-slate-800 border-b border-slate-700 px-6 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-xl">
+                {consultation.lawyer.photo}
+              </div>
+              <div>
+                <div className="text-white font-semibold text-sm">{consultation.lawyer.name}</div>
+                <div className="text-slate-400 text-xs">{consultation.lawyer.expertise}</div>
+              </div>
             </div>
+            <div className="h-8 w-px bg-slate-700"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-white text-sm font-medium">Live Consultation</span>
+            </div>
+          </div>
 
-            {steps.map((step) => (
-              <div key={step.number} className="flex flex-col items-center">
-                <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
-                    currentStep >= step.number
-                      ? 'bg-blue-900 text-white'
-                      : 'bg-white border-2 border-slate-300 text-slate-400'
-                  }`}
-                >
-                  {currentStep > step.number ? (
-                    <CheckCircle className="w-6 h-6" />
-                  ) : (
-                    <step.icon className="w-5 h-5" />
-                  )}
-                </div>
-                <div
-                  className={`mt-2 text-sm font-medium ${
-                    currentStep >= step.number ? 'text-slate-900' : 'text-slate-400'
-                  }`}
-                >
-                  {step.title}
+          <div className="flex items-center gap-6">
+            {/* Timer */}
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <div className="text-slate-400 text-xs">Time Elapsed</div>
+                <div className="text-white font-mono font-semibold">{formatTime(consultation.timeElapsed)}</div>
+              </div>
+              <div className="h-8 w-px bg-slate-700"></div>
+              <div className="text-right">
+                <div className="text-slate-400 text-xs">Time Remaining</div>
+                <div className={`font-mono font-semibold ${timeRemaining < 5 ? 'text-red-400' : 'text-green-400'}`}>
+                  {formatTime(timeRemaining)}
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl p-8 shadow-sm">
-              {/* Step 1: Date & Time */}
-              {currentStep === 1 && (
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-2">Select Date & Time</h2>
-                  <p className="text-slate-600 mb-6">Choose your preferred consultation slot</p>
-
-                  {/* Date Selection */}
-                  <div className="mb-8">
-                    <h3 className="font-semibold text-slate-900 mb-4">Select Date</h3>
-                    <div className="grid grid-cols-5 gap-3">
-                      {dates.map((d) => (
-                        <button
-                          key={d.date}
-                          disabled={!d.available}
-                          onClick={() => setSelectedDate(d.date)}
-                          className={`p-4 rounded-lg border-2 transition-all ${
-                            !d.available
-                              ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
-                              : selectedDate === d.date
-                              ? 'border-blue-900 bg-blue-50 text-blue-900'
-                              : 'border-slate-300 hover:border-blue-900 hover:bg-blue-50'
-                          }`}
-                        >
-                          <div className="font-semibold">{d.day}</div>
-                          <div className="text-sm mt-1">{d.date.split('-')[2]}</div>
-                        </button>
-                      ))}
-                    </div>
+      {/* Main Content */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Video Area */}
+        <div className="flex-1 relative">
+          {/* Lawyer Video (Main) */}
+          <div className="absolute inset-0 bg-slate-800">
+            <div className="w-full h-full flex items-center justify-center">
+              {isVideoOn ? (
+                <div className="relative w-full h-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
+                  <div className="text-9xl">{consultation.lawyer.photo}</div>
+                  <div className="absolute bottom-6 left-6 bg-slate-900/80 backdrop-blur-sm px-4 py-2 rounded-lg">
+                    <div className="text-white font-medium">{consultation.lawyer.name}</div>
                   </div>
-
-                  {/* Time Selection */}
-                  {selectedDate && (
-                    <div>
-                      <h3 className="font-semibold text-slate-900 mb-4">Select Time Slot</h3>
-                      
-                      <div className="space-y-4">
-                        {Object.entries(timeSlots).map(([period, slots]) => (
-                          <div key={period}>
-                            <div className="text-sm font-medium text-slate-600 mb-2 capitalize">{period}</div>
-                            <div className="grid grid-cols-4 gap-3">
-                              {slots.map((slot) => (
-                                <button
-                                  key={slot}
-                                  onClick={() => setSelectedSlot(slot)}
-                                  className={`px-4 py-3 rounded-lg border-2 transition-all font-medium ${
-                                    selectedSlot === slot
-                                      ? 'border-blue-900 bg-blue-50 text-blue-900'
-                                      : 'border-slate-300 hover:border-blue-900 hover:bg-blue-50'
-                                  }`}
-                                >
-                                  {slot}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                </div>
+              ) : (
+                <div className="text-slate-500 text-center">
+                  <VideoOff className="w-20 h-20 mx-auto mb-4" />
+                  <div className="text-lg">Video is turned off</div>
                 </div>
               )}
+            </div>
+          </div>
 
-              {/* Step 2: Consultation Details */}
-              {currentStep === 2 && (
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-2">Consultation Details</h2>
-                  <p className="text-slate-600 mb-6">Provide information about your legal matter</p>
-
-                  <div className="space-y-6">
-                    {/* Description */}
-                    <div>
-                      <label className="block font-medium text-slate-900 mb-2">
-                        Brief Description <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Describe your legal issue or what you'd like to discuss during the consultation..."
-                        rows={6}
-                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      <div className="text-sm text-slate-500 mt-1">
-                        {description.length}/500 characters
-                      </div>
-                    </div>
-
-                    {/* File Upload */}
-                    <div>
-                      <label className="block font-medium text-slate-900 mb-2">
-                        Upload Documents (Optional)
-                      </label>
-                      <p className="text-sm text-slate-600 mb-3">
-                        Upload any relevant documents (Max 5 files, 10MB each)
-                      </p>
-                      
-                      <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-blue-900 hover:bg-blue-50 transition-colors cursor-pointer">
-                        <input
-                          type="file"
-                          multiple
-                          onChange={handleFileUpload}
-                          className="hidden"
-                          id="file-upload"
-                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                        />
-                        <label htmlFor="file-upload" className="cursor-pointer">
-                          <Upload className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                          <div className="font-medium text-slate-700">Click to upload files</div>
-                          <div className="text-sm text-slate-500 mt-1">PDF, DOC, JPG, PNG</div>
-                        </label>
-                      </div>
-
-                      {uploadedFiles.length > 0 && (
-                        <div className="mt-4 space-y-2">
-                          {uploadedFiles.map((file:any, idx:number) => (
-                            <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                  <FileText className="w-5 h-5 text-blue-900" />
-                                </div>
-                                <div>
-                                  <div className="font-medium text-slate-900 text-sm">{file.name}</div>
-                                  <div className="text-xs text-slate-500">{(file.size / 1024).toFixed(2)} KB</div>
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => removeFile(idx)}
-                                className="w-8 h-8 hover:bg-slate-200 rounded-lg flex items-center justify-center transition-colors"
-                              >
-                                <X className="w-4 h-4 text-slate-600" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Additional Notes */}
-                    <div>
-                      <label className="block font-medium text-slate-900 mb-2">
-                        Additional Notes
-                      </label>
-                      <textarea
-                        placeholder="Any other information you'd like the lawyer to know beforehand..."
-                        rows={3}
-                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
+          {/* Client Video (PIP) */}
+          <div className="absolute top-6 right-6 w-64 h-48 bg-slate-900 rounded-xl overflow-hidden shadow-2xl border-2 border-slate-700">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
+              <div className="text-6xl">{consultation.client.photo}</div>
+              <div className="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-sm px-3 py-1 rounded-lg">
+                <div className="text-white text-sm font-medium">You</div>
+              </div>
+              {!isVideoOn && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                    <VideoOff className="w-4 h-4 text-white" />
                   </div>
                 </div>
               )}
+            </div>
+          </div>
 
-              {/* Step 3: Review & Confirm */}
-              {currentStep === 3 && (
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-2">Review & Confirm</h2>
-                  <p className="text-slate-600 mb-6">Please review your booking details</p>
+          {/* Screen Share Indicator */}
+          {isScreenSharing && (
+            <div className="absolute top-6 left-6 bg-blue-500 px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg">
+              <Monitor className="w-5 h-5 text-white" />
+              <span className="text-white font-medium text-sm">Screen Sharing Active</span>
+            </div>
+          )}
+        </div>
 
-                  <div className="space-y-6">
-                    {/* Booking Summary */}
-                    <div className="bg-slate-50 rounded-lg p-6">
-                      <h3 className="font-semibold text-slate-900 mb-4">Consultation Summary</h3>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-slate-600">Date</span>
-                          <span className="font-medium text-slate-900">{selectedDate}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-600">Time</span>
-                          <span className="font-medium text-slate-900">{selectedSlot}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-600">Duration</span>
-                          <span className="font-medium text-slate-900">{lawyer.duration} minutes</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-slate-600">Type</span>
-                          <span className="font-medium text-slate-900">Video Consultation</span>
-                        </div>
+        {/* Right Sidebar - Chat & Documents */}
+        {(showChat || showDocuments) && (
+          <div className="w-96 bg-slate-800 border-l border-slate-700 flex flex-col">
+            {/* Tabs */}
+            <div className="flex border-b border-slate-700">
+              <button
+                onClick={() => { setShowChat(true); setShowDocuments(false); }}
+                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                  showChat ? 'text-white bg-slate-700' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <MessageCircle className="w-4 h-4 inline mr-2" />
+                Chat
+              </button>
+              <button
+                onClick={() => { setShowChat(false); setShowDocuments(true); }}
+                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                  showDocuments ? 'text-white bg-slate-700' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <FileText className="w-4 h-4 inline mr-2" />
+                Documents ({documents.length})
+              </button>
+            </div>
+
+            {/* Chat Panel */}
+            {showChat && (
+              <>
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {chatMessages.map((msg) => (
+                    <div key={msg.id} className={`flex ${msg.sender === 'client' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] ${msg.sender === 'client' ? 'bg-blue-600' : 'bg-slate-700'} rounded-lg p-3`}>
+                        <div className="text-xs text-slate-300 mb-1">{msg.name}</div>
+                        <div className="text-white text-sm">{msg.message}</div>
+                        <div className="text-xs text-slate-400 mt-1">{msg.time}</div>
                       </div>
                     </div>
-
-                    {/* Case Details */}
-                    <div className="bg-slate-50 rounded-lg p-6">
-                      <h3 className="font-semibold text-slate-900 mb-3">Case Details</h3>
-                      <p className="text-slate-700 leading-relaxed">{description}</p>
-                      {uploadedFiles.length > 0 && (
-                        <div className="mt-4">
-                          <div className="text-sm font-medium text-slate-700 mb-2">Attached Documents:</div>
-                          <div className="space-y-1">
-                            {uploadedFiles.map((file:any, idx:number) => (
-                              <div key={idx} className="text-sm text-slate-600">• {file.name}</div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Terms & Conditions */}
-                    <div className="space-y-4">
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={agreed}
-                          onChange={(e) => setAgreed(e.target.checked)}
-                          className="w-5 h-5 text-blue-900 rounded mt-0.5"
-                        />
-                        <span className="text-sm text-slate-700">
-                          I agree to the <a href="#" className="text-blue-900 hover:underline">Terms & Conditions</a> and <a href="#" className="text-blue-900 hover:underline">Privacy Policy</a>. I understand that this consultation is for legal advice only and does not establish an attorney-client relationship.
-                        </span>
-                      </label>
-                    </div>
-
-                    {/* Cancellation Policy */}
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                      <div className="font-medium text-amber-900 mb-1">Cancellation Policy</div>
-                      <div className="text-sm text-amber-800">
-                        You can cancel or reschedule this consultation up to 4 hours before the scheduled time for a full refund.
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              )}
 
-              {/* Step 4: Payment */}
-              {currentStep === 4 && (
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-2">Payment</h2>
-                  <p className="text-slate-600 mb-6">Complete your booking with secure payment</p>
-
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <CreditCard className="w-10 h-10 text-blue-900" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-slate-900 mb-2">Redirecting to Payment Gateway</h3>
-                    <p className="text-slate-600 mb-6">You'll be redirected to Razorpay to complete the payment securely</p>
-                    <button className="px-8 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors font-semibold">
-                      Proceed to Payment
+                {/* Chat Input */}
+                <div className="p-4 border-t border-slate-700">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={chatMessage}
+                      onChange={(e) => setChatMessage(e.target.value)}
+                      placeholder="Type a message..."
+                      className="flex-1 bg-slate-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                    <button className="w-10 h-10 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center transition-colors">
+                      <Send className="w-5 h-5 text-white" />
                     </button>
                   </div>
                 </div>
-              )}
+              </>
+            )}
 
-              {/* Navigation Buttons */}
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-200">
-                {currentStep > 1 ? (
-                  <button
-                    onClick={() => setCurrentStep(currentStep - 1)}
-                    className="px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                    Back
-                  </button>
-                ) : (
-                  <div></div>
-                )}
+            {/* Documents Panel */}
+            {showDocuments && (
+              <>
+                <div className="flex-1 overflow-y-auto p-4">
+                  <div className="space-y-3">
+                    {documents.map((doc) => (
+                      <div key={doc.id} className="bg-slate-700 rounded-lg p-4 hover:bg-slate-600 transition-colors">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <FileText className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-white font-medium text-sm truncate">{doc.name}</div>
+                            <div className="text-slate-400 text-xs mt-1">
+                              {doc.size} • Uploaded by {doc.uploadedBy === 'client' ? 'You' : consultation.lawyer.name}
+                            </div>
+                          </div>
+                          <button className="w-8 h-8 hover:bg-slate-500 rounded-lg flex items-center justify-center transition-colors">
+                            <Download className="w-4 h-4 text-slate-300" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-                {currentStep < 4 ? (
-                  <button
-                    onClick={() => setCurrentStep(currentStep + 1)}
-                    disabled={!canProceed()}
-                    className={`px-6 py-3 rounded-lg transition-colors flex items-center gap-2 font-semibold ${
-                      canProceed()
-                        ? 'bg-blue-900 text-white hover:bg-blue-800'
-                        : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                    }`}
-                  >
-                    Continue
-                    <ChevronRight className="w-5 h-5" />
+                {/* Upload Button */}
+                <div className="p-4 border-t border-slate-700">
+                  <button className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center gap-2 transition-colors font-medium">
+                    <Upload className="w-5 h-5" />
+                    Upload Document
                   </button>
-                ) : null}
-              </div>
-            </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Control Bar */}
+      <div className="bg-slate-800 border-t border-slate-700 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {/* Video Toggle */}
+            <button
+              onClick={() => setIsVideoOn(!isVideoOn)}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+                isVideoOn
+                  ? 'bg-slate-700 hover:bg-slate-600 text-white'
+                  : 'bg-red-500 hover:bg-red-600 text-white'
+              }`}
+            >
+              {isVideoOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
+            </button>
+
+            {/* Audio Toggle */}
+            <button
+              onClick={() => setIsAudioOn(!isAudioOn)}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+                isAudioOn
+                  ? 'bg-slate-700 hover:bg-slate-600 text-white'
+                  : 'bg-red-500 hover:bg-red-600 text-white'
+              }`}
+            >
+              {isAudioOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+            </button>
+
+            {/* Speaker Toggle */}
+            <button
+              onClick={() => setIsSpeakerOn(!isSpeakerOn)}
+              className="w-12 h-12 bg-slate-700 hover:bg-slate-600 rounded-xl flex items-center justify-center transition-colors text-white"
+            >
+              {isSpeakerOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
+
+            <div className="w-px h-8 bg-slate-700"></div>
+
+            {/* Screen Share */}
+            <button
+              onClick={() => setIsScreenSharing(!isScreenSharing)}
+              className={`px-4 h-12 rounded-xl flex items-center gap-2 transition-all ${
+                isScreenSharing
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-slate-700 hover:bg-slate-600 text-white'
+              }`}
+            >
+              <Monitor className="w-5 h-5" />
+              <span className="text-sm font-medium">
+                {isScreenSharing ? 'Stop Sharing' : 'Share Screen'}
+              </span>
+            </button>
+
+            {/* Chat Toggle */}
+            <button
+              onClick={() => setShowChat(!showChat)}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors relative ${
+                showChat ? 'bg-blue-600 text-white' : 'bg-slate-700 hover:bg-slate-600 text-white'
+              }`}
+            >
+              <MessageCircle className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs flex items-center justify-center font-semibold">
+                2
+              </span>
+            </button>
+
+            {/* Documents Toggle */}
+            <button
+              onClick={() => setShowDocuments(!showDocuments)}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
+                showDocuments ? 'bg-blue-600 text-white' : 'bg-slate-700 hover:bg-slate-600 text-white'
+              }`}
+            >
+              <FileText className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Sidebar - Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl p-6 shadow-sm sticky top-8">
-              <h3 className="font-semibold text-slate-900 mb-4">Booking Summary</h3>
-              
-              <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-200">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl flex items-center justify-center text-2xl">
-                  {lawyer.photo}
-                </div>
-                <div>
-                  <div className="font-semibold text-slate-900">{lawyer.name}</div>
-                  <div className="text-sm text-slate-600">{lawyer.expertise}</div>
-                </div>
-              </div>
+          {/* Center - End Call */}
+          <button className="px-8 h-12 bg-red-500 hover:bg-red-600 text-white rounded-xl flex items-center gap-2 transition-colors font-semibold shadow-lg">
+            <PhoneOff className="w-5 h-5" />
+            End Consultation
+          </button>
 
-              <div className="space-y-3 mb-6">
-                {selectedDate && (
-                  <div className="flex items-center gap-3 text-sm">
-                    <Calendar className="w-5 h-5 text-slate-400" />
-                    <span className="text-slate-700">{selectedDate}</span>
-                  </div>
-                )}
-                {selectedSlot && (
-                  <div className="flex items-center gap-3 text-sm">
-                    <Clock className="w-5 h-5 text-slate-400" />
-                    <span className="text-slate-700">{selectedSlot} ({lawyer.duration} min)</span>
-                  </div>
-                )}
-              </div>
+          {/* Right - More Options */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsFullScreen(!isFullScreen)}
+              className="w-12 h-12 bg-slate-700 hover:bg-slate-600 rounded-xl flex items-center justify-center transition-colors text-white"
+            >
+              {isFullScreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+            </button>
 
-              <div className="border-t border-slate-200 pt-4">
-                <div className="flex justify-between mb-2">
-                  <span className="text-slate-600">Consultation Fee</span>
-                  <span className="font-semibold text-slate-900">₹{lawyer.fee}</span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-slate-600">Platform Fee</span>
-                  <span className="font-semibold text-slate-900">₹50</span>
-                </div>
-                <div className="flex justify-between text-lg font-bold text-slate-900 pt-4 border-t border-slate-200">
-                  <span>Total</span>
-                  <span>₹{lawyer.fee + 50}</span>
-                </div>
-              </div>
+            <button className="w-12 h-12 bg-slate-700 hover:bg-slate-600 rounded-xl flex items-center justify-center transition-colors text-white">
+              <Settings className="w-5 h-5" />
+            </button>
 
-              <div className="mt-6 p-4 bg-green-50 rounded-lg">
-                <div className="flex items-center gap-2 text-sm text-green-800">
-                  <CheckCircle className="w-5 h-5" />
-                  <span className="font-medium">Instant Confirmation</span>
-                </div>
-              </div>
-            </div>
+            <button className="w-12 h-12 bg-slate-700 hover:bg-slate-600 rounded-xl flex items-center justify-center transition-colors text-white">
+              <MoreVertical className="w-5 h-5" />
+            </button>
           </div>
+        </div>
+      </div>
+
+      {/* Connection Quality Indicator */}
+      <div className="absolute top-20 left-6">
+        <div className="bg-slate-800/90 backdrop-blur-sm px-3 py-2 rounded-lg flex items-center gap-2">
+          <div className="flex gap-1">
+            <div className="w-1 h-3 bg-green-500 rounded-full"></div>
+            <div className="w-1 h-4 bg-green-500 rounded-full"></div>
+            <div className="w-1 h-5 bg-green-500 rounded-full"></div>
+          </div>
+          <span className="text-white text-xs font-medium">Excellent Connection</span>
         </div>
       </div>
     </div>
