@@ -144,6 +144,14 @@ const useAuth = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules
             set({
                 isLoading: loading
             });
+        },
+        setAuth: (user, token)=>{
+            set({
+                user,
+                token,
+                isAuthenticated: true,
+                isLoading: false
+            });
         }
     }), {
     name: "auth-storage"

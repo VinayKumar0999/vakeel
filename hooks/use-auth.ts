@@ -21,6 +21,7 @@ interface AuthState {
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
   setLoading: (loading: boolean) => void;
+  setAuth: (user: User, token: string) => void;
 }
 
 export const useAuth = create<AuthState>()(
@@ -57,6 +58,15 @@ export const useAuth = create<AuthState>()(
 
       setLoading: (loading: boolean) => {
         set({ isLoading: loading });
+      },
+
+      setAuth: (user: User, token: string) => {
+        set({
+          user,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+        });
       },
     }),
     {
