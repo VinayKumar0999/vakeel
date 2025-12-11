@@ -1,0 +1,15 @@
+{
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/(auth)/signup/lawyer/page": "app/(auth)/signup/lawyer/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/admin/lawyers/verify/page": "app/admin/lawyers/verify/page.js",
+  "/book/[lawyerId]/page": "app/book/[lawyerId]/page.js",
+  "/consultation/page": "app/consultation/page.js",
+  "/consultation/room/page": "app/consultation/room/page.js",
+  "/dashboard/client/page": "app/dashboard/client/page.js",
+  "/dashboard/lawyer/page": "app/dashboard/lawyer/page.js",
+  "/lawers/[id]/page": "app/lawers/[id]/page.js",
+  "/lawers/page": "app/lawers/page.js",
+  "/page": "app/page.js"
+}
