@@ -15,3 +15,7 @@ yarn-error.log*
 pnpm-debug.log*
 .vscode/
 .idea/
+
+# Uploads directory (user-uploaded files)
+public/uploads/
+uploads/

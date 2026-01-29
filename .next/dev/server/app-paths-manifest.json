@@ -1,6 +1,0 @@
-{
-  "/consultation/page": "app/consultation/page.js",
-  "/consultation/room/page": "app/consultation/room/page.js",
-  "/dashboard/lawyer/page": "app/dashboard/lawyer/page.js",
-  "/page": "app/page.js"
-}
