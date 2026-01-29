@@ -1,0 +1,176 @@
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle2, FileText, User, Briefcase, MapPin } from "lucide-react";
+import type { LawyerSignupData } from "../page";
+
+interface Step5ReviewProps {
+  formData: LawyerSignupData;
+}
+
+export default function Step5Review({ formData }: Step5ReviewProps) {
+  const ReviewSection = ({
+    icon: Icon,
+    title,
+    children,
+  }: {
+    icon: React.ElementType;
+    title: string;
+    children: React.ReactNode;
+  }) => (
+    <Card className="mb-4">
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <Icon className="w-5 h-5 text-primary-600" />
+          <CardTitle className="text-lg">{title}</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center gap-2 text-green-800">
+          <CheckCircle2 className="w-5 h-5" />
+          <p className="font-medium">Please review all information before submitting</p>
+        </div>
+      </div>
+
+      <ReviewSection icon={User} title="Basic Information">
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-gray-600">Name:</span>
+            <span className="font-medium">{formData.fullName}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Email:</span>
+            <span className="font-medium">{formData.email}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Phone:</span>
+            <span className="font-medium">{formData.phone}</span>
+          </div>
+        </div>
+      </ReviewSection>
+
+      <ReviewSection icon={Briefcase} title="Professional Details">
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-gray-600">Bar Council Number:</span>
+            <span className="font-medium">{formData.barCouncilNumber}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Bar Council State:</span>
+            <span className="font-medium">{formData.barCouncilState}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Experience:</span>
+            <span className="font-medium">{formData.yearsOfExperience} years</span>
+          </div>
+          <div className="mt-3">
+            <span className="text-gray-600 block mb-1">Practice Areas:</span>
+            <div className="flex flex-wrap gap-2">
+              {formData.practiceAreas.map((area) => (
+                <span
+                  key={area}
+                  className="px-2 py-1 bg-primary-100 text-primary-800 rounded text-xs"
+                >
+                  {area}
+                </span>
+              ))}
+            </div>
+          </div>
+          {formData.languages.length > 0 && (
+            <div className="mt-3">
+              <span className="text-gray-600 block mb-1">Languages:</span>
+              <div className="flex flex-wrap gap-2">
+                {formData.languages.map((lang) => (
+                  <span
+                    key={lang}
+                    className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs"
+                  >
+                    {lang}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </ReviewSection>
+
+      <ReviewSection icon={FileText} title="Documents">
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">Bar Certificate:</span>
+            <span className="font-medium text-green-600">
+              {formData.barCertificate ? "✓ Uploaded" : "✗ Missing"}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">ID Proof:</span>
+            <span className="font-medium text-green-600">
+              {formData.idProof ? "✓ Uploaded" : "✗ Missing"}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-600">Profile Photo:</span>
+            <span className="font-medium">
+              {formData.profilePhoto ? "✓ Uploaded" : "Optional"}
+            </span>
+          </div>
+        </div>
+      </ReviewSection>
+
+      <ReviewSection icon={User} title="Profile Setup">
+        <div className="space-y-2 text-sm">
+          <div>
+            <span className="text-gray-600 block mb-1">Bio:</span>
+            <p className="text-gray-800">{formData.bio || "Not provided"}</p>
+          </div>
+          <div className="flex justify-between mt-3">
+            <span className="text-gray-600">Consultation Fee:</span>
+            <span className="font-medium">₹{formData.consultationFee}</span>
+          </div>
+          {formData.specializations.length > 0 && (
+            <div className="mt-3">
+              <span className="text-gray-600 block mb-1">Specializations:</span>
+              <div className="flex flex-wrap gap-2">
+                {formData.specializations.map((spec) => (
+                  <span
+                    key={spec}
+                    className="px-2 py-1 bg-primary-100 text-primary-800 rounded text-xs"
+                  >
+                    {spec}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </ReviewSection>
+
+      <ReviewSection icon={MapPin} title="Office Address">
+        <div className="space-y-2 text-sm">
+          <div>
+            <span className="text-gray-600 block mb-1">Address:</span>
+            <p className="text-gray-800">{formData.officeAddress}</p>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">City:</span>
+            <span className="font-medium">{formData.city}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">State:</span>
+            <span className="font-medium">{formData.state}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-600">Pincode:</span>
+            <span className="font-medium">{formData.pincode}</span>
+          </div>
+        </div>
+      </ReviewSection>
+    </div>
+  );
+}

@@ -28,7 +28,17 @@ export const lawyerAPI = {
 
 export const authAPI = {
   login: (credentials: { email: string; password: string }) => api.post('/auth/login', credentials),
-  register: (data: any) => api.post('/auth/register', data),
+  register: (data: any) => {
+    // If data is FormData, use multipart/form-data headers
+    if (data instanceof FormData) {
+      return api.post('/auth/register', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    }
+    return api.post('/auth/register', data);
+  },
   logout: () => api.post('/auth/logout'),
   getCurrentUser: () => api.get('/auth/me'),
 };
