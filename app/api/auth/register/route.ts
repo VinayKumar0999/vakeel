@@ -4,7 +4,25 @@ import { uploadLawyerDocuments } from "@/lib/storage-helpers";
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
+    // Handle both JSON and FormData requests
+    const contentType = request.headers.get("content-type") || "";
+    let formData: FormData;
+    let isJsonRequest = false;
+
+    if (contentType.includes("application/json")) {
+      // Client registration sends JSON
+      isJsonRequest = true;
+      const jsonData = await request.json();
+      // Convert JSON to FormData for unified handling
+      formData = new FormData();
+      Object.keys(jsonData).forEach((key) => {
+        formData.append(key, String(jsonData[key]));
+      });
+    } else {
+      // Lawyer registration sends FormData (multipart/form-data)
+      formData = await request.formData();
+    }
+
     const role = formData.get("role") as string;
 
     // Handle Lawyer Registration
@@ -110,7 +128,7 @@ export async function POST(request: NextRequest) {
       // Check if email or phone already exists
       if (await emailExists(email)) {
         return NextResponse.json(
-          { message: "Email already registered" },
+          { message: "Advocate already registered" },
           { status: 400 }
         );
       }
@@ -244,7 +262,7 @@ export async function POST(request: NextRequest) {
               profilePhotoPath: lawyerProfile.profile_photo_path,
             },
             token: `supabase-token-${user.id}`, // In production, generate proper JWT
-            message: "Registration successful. Your account is pending verification.",
+            message: "Registration successful. Welcome to Vakeel Kutami.",
           },
         },
         { status: 201 }

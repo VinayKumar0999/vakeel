@@ -1,14 +1,17 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, FileText, User, Briefcase, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, FileText, User, Briefcase, MapPin, Send } from "lucide-react";
 import type { LawyerSignupData } from "../page";
 
 interface Step5ReviewProps {
   formData: LawyerSignupData;
+  onSubmit?: () => void;
+  isSubmitting?: boolean;
 }
 
-export default function Step5Review({ formData }: Step5ReviewProps) {
+export default function Step5Review({ formData, onSubmit, isSubmitting = false }: Step5ReviewProps) {
   const ReviewSection = ({
     icon: Icon,
     title,
@@ -171,6 +174,34 @@ export default function Step5Review({ formData }: Step5ReviewProps) {
           </div>
         </div>
       </ReviewSection>
+
+      {/* Submit Button Section */}
+      <div className="mt-6 pt-6 border-t">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <p className="text-sm text-blue-800 text-center">
+            <strong>Ready to submit?</strong> Please review all information above. Once submitted, your account will be pending verification.
+          </p>
+        </div>
+        <Button
+          type="button"
+          onClick={onSubmit || (() => {})}
+          disabled={isSubmitting || !onSubmit}
+          className="w-full bg-primary-600 hover:bg-primary-700 text-white py-6 text-lg font-semibold"
+          size="lg"
+        >
+          {isSubmitting ? (
+            <>
+              <span className="animate-spin mr-2">⏳</span>
+              Submitting Registration...
+            </>
+          ) : (
+            <>
+              <Send className="w-5 h-5 mr-2" />
+              Submit Registration
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 }

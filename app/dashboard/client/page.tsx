@@ -1,9 +1,46 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Video, Calendar, FileText, CreditCard, Settings, MessageCircle, Clock, Star, Search, Bell, LogOut, Home, User, Download, ChevronRight, PlayCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function ClientDashboard() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Protect route - check authentication
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated || !user) {
+        router.push('/login?redirect=/dashboard/client');
+        return;
+      }
+      
+      // Check if user has correct role
+      if (user.role !== 'CLIENT' && user.role !== 'user') {
+        // Redirect to appropriate dashboard based on role
+        if (user.role === 'LAWYER' || user.role === 'lawyer') {
+          router.push('/dashboard/lawyer');
+        } else {
+          router.push('/login');
+        }
+      }
+    }
+  }, [isAuthenticated, user, isLoading, router]);
+
+  // Show loading state while checking auth
+  if (isLoading || !isAuthenticated || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
   
   const upcomingConsultations = [
     {
@@ -66,35 +103,29 @@ export default function ClientDashboard() {
     { label: "Total Consultations", value: "12", icon: Video, color: "bg-blue-500" },
     { label: "Upcoming", value: "2", icon: Calendar, color: "bg-green-500" },
     { label: "Documents", value: "8", icon: FileText, color: "bg-purple-500" },
-    { label: "Total Spent", value: "₹18,000", icon: CreditCard, color: "bg-amber-500" }
   ];
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
+  const getDashboardLink = () => {
+    if (!user) return '/login';
+    if (user.role === 'LAWYER' || user.role === 'lawyer') {
+      return '/dashboard/lawyer';
+    }
+    if (user.role === 'CLIENT' || user.role === 'user') {
+      return '/dashboard/client';
+    }
+    if (user.role === 'ADMIN' || user.role === 'admin') {
+      return '/admin';
+    }
+    return '/dashboard/client';
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold text-blue-900">Vakeel Kutami</div>
-            <div className="flex items-center gap-4">
-              <button className="relative w-10 h-10 hover:bg-slate-100 rounded-lg flex items-center justify-center transition-colors">
-                <Bell className="w-5 h-5 text-slate-600" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
-              <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-slate-900">John Doe</div>
-                  <div className="text-xs text-slate-500">Client</div>
-                </div>
-                <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center text-white font-semibold">
-                  JD
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       <div className="flex">
         {/* Sidebar */}
         <aside className="w-64 bg-white border-r border-slate-200 min-h-screen sticky top-16">
@@ -124,7 +155,10 @@ export default function ClientDashboard() {
             </div>
             
             <div className="mt-8 pt-8 border-t border-slate-200">
-              <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+              <button 
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+              >
                 <LogOut className="w-5 h-5" />
                 Logout
               </button>
@@ -137,12 +171,14 @@ export default function ClientDashboard() {
           {activeTab === 'overview' && (
             <div>
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back, John!</h1>
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                  Welcome back, {user?.fullName || 'User'}!
+                </h1>
                 <p className="text-slate-600">Here's what's happening with your consultations</p>
               </div>
 
               {/* Stats Grid */}
-              <div className="grid md:grid-cols-4 gap-6 mb-8">
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
                 {stats.map((stat, idx) => (
                   <div key={idx} className="bg-white rounded-xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">

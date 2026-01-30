@@ -47,8 +47,8 @@ export default function Step4ProfileSetup({ formData, updateFormData }: Step4Pro
         <p className="text-xs text-gray-500">
           Minimum 50 characters. This will be visible on your profile.
         </p>
-        <p className="text-xs text-gray-400">
-          {formData.bio.length} / 50 characters
+        <p className={`text-xs ${formData.bio.length >= 50 ? 'text-green-600' : 'text-red-500'}`}>
+          {formData.bio.length} / 50 characters {formData.bio.length >= 50 ? '✓' : ''}
         </p>
       </div>
 
@@ -96,7 +96,7 @@ export default function Step4ProfileSetup({ formData, updateFormData }: Step4Pro
             <Plus className="w-4 h-4" />
           </button>
         </div>
-        {formData.specializations.length > 0 && (
+        {formData.specializations.length > 0 ? (
           <div className="flex flex-wrap gap-2 mt-2">
             {formData.specializations.map((spec) => (
               <span
@@ -114,6 +114,10 @@ export default function Step4ProfileSetup({ formData, updateFormData }: Step4Pro
               </span>
             ))}
           </div>
+        ) : (
+          <p className="text-xs text-red-500 mt-2">
+            ⚠️ Please add at least one specialization
+          </p>
         )}
       </div>
 

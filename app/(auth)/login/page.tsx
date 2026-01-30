@@ -2,23 +2,27 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { authAPI } from "@/lib/api";
 import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setAuth } = useAuth();
+  
+  const redirectTo = searchParams?.get('redirect') || null;
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"CLIENT" | "LAWYER">("CLIENT");
+  const [errors, setErrors] = useState<{ email?: string; password?: string; submit?: string }>({});
 
   const [formData, setFormData] = useState({
     email: "",
@@ -26,56 +30,96 @@ export default function LoginPage() {
     rememberMe: false,
   });
 
+  const validateForm = (): boolean => {
+    const newErrors: { email?: string; password?: string } = {};
+    const trimmedEmail = formData.email.trim();
+    const trimmedPassword = formData.password.trim();
+
+    if (!trimmedEmail) {
+      newErrors.email = "Email or phone number is required";
+    }
+
+    if (!trimmedPassword) {
+      newErrors.password = "Password is required";
+    } else if (trimmedPassword.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const isFormValid = formData.email.trim().length > 0 && formData.password.trim().length >= 8;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setErrors({});
+
+    if (!validateForm()) {
+      toast.error("Please fix the errors below");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const response = await authAPI.login({
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
       });
 
       const { user, token } = response.data.data || response.data;
 
-      // Save auth state (useAuth implementation should store token safely)
+      if (!user || !token) {
+        toast.error("Invalid response from server");
+        return;
+      }
+
+      // Save auth state (this will set cookies via useAuth hook)
       setAuth(user, token);
 
-      // Redirect logic based on backend role
-      // Backend must be authoritative
-      if (user.role === "ADMIN") {
+      toast.success(`Welcome back, ${user.fullName || user.email}!`);
+
+      // Redirect logic based on user role
+      // Priority: redirectTo param > role-based dashboard
+      if (redirectTo && redirectTo.startsWith('/')) {
+        router.push(redirectTo);
+        return;
+      }
+
+      // Role-based redirects
+      if (user.role === "ADMIN" || user.role === "admin") {
         router.push("/admin");
         return;
       }
 
-      if (user.role === "LAWYER") {
-        // If you maintain verification status, check it here
-        if (user.verification_status && user.verification_status !== "APPROVED") {
-          toast.success("Logged in. Your lawyer verification is pending.");
-          router.push("/auth/verify-pending");
+      if (user.role === "LAWYER" || user.role === "lawyer") {
+        // Check verification status for lawyers
+        if (user.verificationStatus && user.verificationStatus !== "APPROVED") {
+          toast("Your lawyer verification is pending. You'll be notified once approved.", {
+            icon: "⏳",
+            duration: 4000,
+          });
+          router.push("/lawyer/verification-pending");
           return;
         }
-        // If the user selected CLIENT by mistake, gently inform them
-        if (selectedRole === "CLIENT") {
-          toast("You logged in as a Lawyer. Redirecting to Lawyer Dashboard.");
-        }
-        router.push("/lawyer/dashboard"); // lawyer dashboard path (adjust if different)
+        router.push("/dashboard/lawyer");
         return;
       }
 
       // Default: CLIENT
-      if (user.role === "CLIENT") {
-        if (selectedRole === "LAWYER") {
-          toast("You logged in as a Client. If you intended to login as a Lawyer, please register or use the lawyer login option.");
-        }
-        router.push("/dashboard");
+      if (user.role === "CLIENT" || user.role === "user") {
+        router.push("/dashboard/client");
         return;
       }
 
       // Fallback
-      router.push("/");
+      router.push("/dashboard/client");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Login failed. Please check credentials.");
+      const errorMessage = error.response?.data?.message || "Login failed. Please check your credentials.";
+      setErrors((prev) => ({ ...prev, submit: errorMessage }));
+      toast.error(errorMessage);
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +151,14 @@ export default function LoginPage() {
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              {errors.submit && (
+                <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>{errors.submit}</span>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="email">
                   Email or Phone Number <span className="text-red-500">*</span>
@@ -117,10 +168,21 @@ export default function LoginPage() {
                   type="text"
                   placeholder="you@example.com or 9876543210"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+                  }}
                   disabled={isLoading}
+                  className={errors.email ? "border-red-500 focus-visible:ring-red-500" : ""}
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
                 />
+                {errors.email && (
+                  <p id="email-error" className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -131,9 +193,14 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
+                    onChange={(e) => {
+                      setFormData({ ...formData, password: e.target.value });
+                      if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                    }}
                     disabled={isLoading}
+                    className={errors.password ? "border-red-500 focus-visible:ring-red-500" : ""}
+                    aria-invalid={!!errors.password}
+                    aria-describedby={errors.password ? "password-error" : undefined}
                   />
                   <button
                     type="button"
@@ -144,6 +211,12 @@ export default function LoginPage() {
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                {errors.password && (
+                  <p id="password-error" className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    {errors.password}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center justify-between">
@@ -161,7 +234,11 @@ export default function LoginPage() {
                 </Link>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading || !isFormValid}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

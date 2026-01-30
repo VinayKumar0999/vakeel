@@ -19,7 +19,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  console.log("RootLayout",children);
+  //console.log("RootLayout",children);
   return (
     <html lang="en">
       <body>

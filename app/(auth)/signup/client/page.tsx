@@ -7,10 +7,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, EyeOff, Loader2, User } from "lucide-react";
+import { Eye, EyeOff, Loader2, User, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { authAPI } from "@/lib/api";
 import toast from "react-hot-toast";
+
+type FormErrors = {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
+  confirmPassword?: string;
+  agreeToTerms?: string;
+  submit?: string;
+};
 
 export default function ClientSignupPage() {
   const router = useRouter();
@@ -18,6 +28,7 @@ export default function ClientSignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -27,46 +38,39 @@ export default function ClientSignupPage() {
     agreeToTerms: false,
   });
 
-  const validateForm = () => {
-    if (!formData.fullName.trim()) {
-      toast.error("Please enter your full name");
-      return false;
-    }
-    if (!formData.email.trim()) {
-      toast.error("Please enter your email");
-      return false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      toast.error("Please enter a valid email address");
-      return false;
-    }
-    if (!formData.phone.trim()) {
-      toast.error("Please enter your phone number");
-      return false;
-    }
-    if (!/^[0-9]{10}$/.test(formData.phone.replace(/\D/g, ""))) {
-      toast.error("Please enter a valid 10-digit phone number");
-      return false;
-    }
-    if (formData.password.length < 8) {
-      toast.error("Password must be at least 8 characters long");
-      return false;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return false;
-    }
-    if (!formData.agreeToTerms) {
-      toast.error("Please agree to the terms and conditions");
-      return false;
-    }
-    return true;
+  const validateForm = (): boolean => {
+    const e: FormErrors = {};
+    const name = formData.fullName.trim();
+    const email = formData.email.trim();
+    const phone = formData.phone.replace(/\D/g, "");
+
+    if (!name) e.fullName = "Full name is required";
+    if (!email) e.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "Enter a valid email address";
+    if (!phone) e.phone = "Phone number is required";
+    else if (phone.length !== 10) e.phone = "Phone must be 10 digits";
+    if (formData.password.length < 8) e.password = "Password must be at least 8 characters";
+    if (formData.password !== formData.confirmPassword) e.confirmPassword = "Passwords do not match";
+    if (!formData.agreeToTerms) e.agreeToTerms = "You must agree to the terms";
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
+
+  // Enable button when core fields have content; full validation runs on submit
+  const hasMinimalInput =
+    formData.fullName.trim().length > 0 &&
+    formData.email.trim().length > 0 &&
+    formData.phone.replace(/\D/g, "").length >= 10 &&
+    formData.password.length >= 8 &&
+    formData.confirmPassword.length >= 8;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setErrors({});
+
     if (!validateForm()) {
+      toast.error("Please fix the errors below");
       return;
     }
 
@@ -74,9 +78,9 @@ export default function ClientSignupPage() {
 
     try {
       const response = await authAPI.register({
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.replace(/\D/g, ""),
         password: formData.password,
         role: "CLIENT",
       });
@@ -85,14 +89,18 @@ export default function ClientSignupPage() {
       setAuth(user, token);
 
       toast.success("Account created successfully! Welcome to Vakeel Kutami!");
-      router.push("/dashboard");
+      router.push("/dashboard/client");
     } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || "Signup failed. Please try again."
-      );
+      const msg = error.response?.data?.message || "Signup failed. Please try again.";
+      setErrors((prev) => ({ ...prev, submit: msg }));
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const clearError = (field: keyof FormErrors) => {
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
   return (
@@ -107,7 +115,14 @@ export default function ClientSignupPage() {
             <CardDescription>Sign up to find and consult with lawyers</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              {errors.submit && (
+                <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>{errors.submit}</span>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="fullName">
                   Full Name <span className="text-red-500">*</span>
@@ -117,10 +132,20 @@ export default function ClientSignupPage() {
                   type="text"
                   placeholder="John Doe"
                   value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  required
+                  onChange={(e) => {
+                    setFormData({ ...formData, fullName: e.target.value });
+                    clearError("fullName");
+                  }}
                   disabled={isLoading}
+                  className={errors.fullName ? "border-red-500 focus-visible:ring-red-500" : ""}
+                  aria-invalid={!!errors.fullName}
                 />
+                {errors.fullName && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    {errors.fullName}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -129,13 +154,23 @@ export default function ClientSignupPage() {
                 </Label>
                 <Input
                   id="email"
-                  type="email"
+                  type="text"
                   placeholder="you@example.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    clearError("email");
+                  }}
                   disabled={isLoading}
+                  className={errors.email ? "border-red-500 focus-visible:ring-red-500" : ""}
+                  aria-invalid={!!errors.email}
                 />
+                {errors.email && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -149,13 +184,19 @@ export default function ClientSignupPage() {
                   value={formData.phone}
                   onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, "");
-                    if (value.length <= 10) {
-                      setFormData({ ...formData, phone: value });
-                    }
+                    if (value.length <= 10) setFormData({ ...formData, phone: value });
+                    clearError("phone");
                   }}
-                  required
                   disabled={isLoading}
+                  className={errors.phone ? "border-red-500 focus-visible:ring-red-500" : ""}
+                  aria-invalid={!!errors.phone}
                 />
+                {errors.phone && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    {errors.phone}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -168,9 +209,14 @@ export default function ClientSignupPage() {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
+                    onChange={(e) => {
+                      setFormData({ ...formData, password: e.target.value });
+                      clearError("password");
+                      clearError("confirmPassword");
+                    }}
                     disabled={isLoading}
+                    className={errors.password ? "border-red-500 focus-visible:ring-red-500" : ""}
+                    aria-invalid={!!errors.password}
                   />
                   <button
                     type="button"
@@ -182,6 +228,12 @@ export default function ClientSignupPage() {
                   </button>
                 </div>
                 <p className="text-xs text-gray-500">Must be at least 8 characters</p>
+                {errors.password && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    {errors.password}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -194,9 +246,13 @@ export default function ClientSignupPage() {
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    required
+                    onChange={(e) => {
+                      setFormData({ ...formData, confirmPassword: e.target.value });
+                      clearError("confirmPassword");
+                    }}
                     disabled={isLoading}
+                    className={errors.confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""}
+                    aria-invalid={!!errors.confirmPassword}
                   />
                   <button
                     type="button"
@@ -207,6 +263,12 @@ export default function ClientSignupPage() {
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    {errors.confirmPassword}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-start gap-2">
@@ -214,9 +276,11 @@ export default function ClientSignupPage() {
                   type="checkbox"
                   id="agreeToTerms"
                   checked={formData.agreeToTerms}
-                  onChange={(e) => setFormData({ ...formData, agreeToTerms: e.target.checked })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, agreeToTerms: e.target.checked });
+                    clearError("agreeToTerms");
+                  }}
                   className="mt-1 rounded border-gray-300"
-                  required
                 />
                 <label htmlFor="agreeToTerms" className="text-sm text-gray-600">
                   I agree to the{" "}
@@ -229,8 +293,18 @@ export default function ClientSignupPage() {
                   </Link>
                 </label>
               </div>
+              {errors.agreeToTerms && (
+                <p className="text-sm text-red-600 flex items-center gap-1">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  {errors.agreeToTerms}
+                </p>
+              )}
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading || !hasMinimalInput}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

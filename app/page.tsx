@@ -40,13 +40,6 @@ export default function LandingPage() {
                 <div className="text-3xl font-bold text-slate-900">10k+</div>
                 <div className="text-slate-600">Consultations</div>
               </div>
-              <div>
-                <div className="flex items-center gap-1">
-                  <span className="text-3xl font-bold text-slate-900">4.9</span>
-                  <Star className="w-6 h-6 fill-amber-400 text-amber-400" />
-                </div>
-                <div className="text-slate-600">Average Rating</div>
-              </div>
             </div>
           </div>
           <div className="relative">

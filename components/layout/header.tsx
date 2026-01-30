@@ -1,14 +1,38 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Scale, Menu, X, Bell, Laugh } from "lucide-react";
+import { Scale, Menu, X, Bell, Laugh, LogOut as LogOutIcon } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { ENABLE_ADMIN_APPROVALS } from "@/lib/feature-flags";
 
 export function Header() {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
+
+  const getDashboardLink = () => {
+    if (!user) return '/login';
+    if (user.role === 'LAWYER' || user.role === 'lawyer') {
+      return '/dashboard/lawyer';
+    }
+    if (user.role === 'CLIENT' || user.role === 'user') {
+      return '/dashboard/client';
+    }
+    // Admin approval UI hidden when ENABLE_ADMIN_APPROVALS is false
+    if (ENABLE_ADMIN_APPROVALS && (user.role === 'ADMIN' || user.role === 'admin' || user.role === 'SUPER_ADMIN')) {
+      return '/admin/approvals';
+    }
+    return '/dashboard/client';
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 supports-[backdrop-filter]:bg-white/60">
@@ -47,7 +71,15 @@ export function Header() {
                         <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
                       </Button>
                       <Button variant="ghost" asChild>
-                        <Link href="/dashboard">Dashboard</Link>
+                        <Link href={getDashboardLink()}>Dashboard</Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 text-slate-700 hover:text-red-600"
+                      >
+                        <LogOutIcon className="h-4 w-4" />
+                        <span className="hidden sm:inline">Logout</span>
                       </Button>
                       <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
                         <span className="text-sm font-medium text-primary-700">
@@ -127,9 +159,19 @@ export function Header() {
             </Link>
             <div className="pt-4 border-t flex flex-col gap-2">
               {isAuthenticated ? (
-                <Button asChild className="w-full">
-                  <Link href="/dashboard">Dashboard</Link>
-                </Button>
+                <>
+                  <Button asChild className="w-full">
+                    <Link href={getDashboardLink()}>Dashboard</Link>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <LogOutIcon className="h-4 w-4" />
+                    Logout
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button variant="outline" asChild className="w-full">

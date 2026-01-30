@@ -2,6 +2,9 @@ import { createServerClient } from './supabase';
 
 const supabase = createServerClient();
 
+/** Supabase Storage bucket for lawyer documents (Bar Certificate, ID Proof, Profile Photo). Create this bucket in Supabase Dashboard → Storage if you get "Bucket not found". */
+export const LAWYER_DOCUMENTS_BUCKET = 'lawyer-documents';
+
 /**
  * Upload file to Supabase Storage
  */
@@ -22,7 +25,10 @@ export async function uploadFile(
     });
 
   if (error) {
-    throw new Error(`Failed to upload file: ${error.message}`);
+    const message = error.message?.toLowerCase().includes('bucket')
+      ? `${error.message} Create the bucket "${bucket}" in Supabase Dashboard → Storage. See SUPABASE_STORAGE_SETUP.md.`
+      : `Failed to upload file: ${error.message}`;
+    throw new Error(message);
   }
 
   return data;
@@ -57,22 +63,22 @@ export async function uploadLawyerDocuments(
   // Upload Bar Certificate
   if (documents.barCertificate) {
     const barCertPath = `bar-certificates/${userId}-${timestamp}-${documents.barCertificate.name}`;
-    await uploadFile('lawyer-documents', barCertPath, documents.barCertificate);
-    uploadedPaths.barCertificatePath = getPublicUrl('lawyer-documents', barCertPath);
+    await uploadFile(LAWYER_DOCUMENTS_BUCKET, barCertPath, documents.barCertificate);
+    uploadedPaths.barCertificatePath = getPublicUrl(LAWYER_DOCUMENTS_BUCKET, barCertPath);
   }
 
   // Upload ID Proof
   if (documents.idProof) {
     const idProofPath = `id-proofs/${userId}-${timestamp}-${documents.idProof.name}`;
-    await uploadFile('lawyer-documents', idProofPath, documents.idProof);
-    uploadedPaths.idProofPath = getPublicUrl('lawyer-documents', idProofPath);
+    await uploadFile(LAWYER_DOCUMENTS_BUCKET, idProofPath, documents.idProof);
+    uploadedPaths.idProofPath = getPublicUrl(LAWYER_DOCUMENTS_BUCKET, idProofPath);
   }
 
   // Upload Profile Photo
   if (documents.profilePhoto) {
     const profilePhotoPath = `profile-photos/${userId}-${timestamp}-${documents.profilePhoto.name}`;
-    await uploadFile('lawyer-documents', profilePhotoPath, documents.profilePhoto);
-    uploadedPaths.profilePhotoPath = getPublicUrl('lawyer-documents', profilePhotoPath);
+    await uploadFile(LAWYER_DOCUMENTS_BUCKET, profilePhotoPath, documents.profilePhoto);
+    uploadedPaths.profilePhotoPath = getPublicUrl(LAWYER_DOCUMENTS_BUCKET, profilePhotoPath);
   }
 
   return uploadedPaths;

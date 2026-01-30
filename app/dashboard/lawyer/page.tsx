@@ -1,10 +1,53 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Video, Calendar, Users, DollarSign, Clock, TrendingUp, Bell, Settings, LogOut, Home, FileText, BarChart3, CheckCircle, X, Eye, MessageCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function LawyerDashboard() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [availabilityStatus, setAvailabilityStatus] = useState('available');
+
+  // Protect route - check authentication
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated || !user) {
+        router.push('/login?redirect=/dashboard/lawyer');
+        return;
+      }
+      
+      // Check if user has correct role
+      if (user.role !== 'LAWYER' && user.role !== 'lawyer') {
+        // Redirect to appropriate dashboard based on role
+        if (user.role === 'CLIENT' || user.role === 'user') {
+          router.push('/dashboard/client');
+        } else {
+          router.push('/login');
+        }
+        return;
+      }
+
+      // Check verification status for lawyers
+      if (user.verificationStatus && user.verificationStatus !== 'APPROVED') {
+        router.push('/lawyer/verification-pending');
+        return;
+      }
+    }
+  }, [isAuthenticated, user, isLoading, router]);
+
+  // Show loading state while checking auth
+  if (isLoading || !isAuthenticated || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const todayConsultations = [
     {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Scale, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { Scale, ChevronLeft, ChevronRight, Check, Send } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { authAPI } from "@/lib/api";
 import toast from "react-hot-toast";
@@ -145,31 +145,44 @@ export default function LawyerSignupPage() {
         return true;
 
       case 4:
-        if (!formData.bio.trim() || formData.bio.length < 50) {
-          toast.error("Please enter a bio (minimum 50 characters)");
+        if (!formData.bio.trim()) {
+          toast.error("Please enter your professional bio");
           return false;
         }
-        if (!formData.consultationFee || parseFloat(formData.consultationFee) <= 0) {
-          toast.error("Please enter a valid consultation fee");
+        if (formData.bio.trim().length < 50) {
+          toast.error(`Bio must be at least 50 characters. Currently ${formData.bio.trim().length} characters.`);
           return false;
         }
-        if (formData.specializations.length === 0) {
+        if (!formData.consultationFee || formData.consultationFee.trim() === "") {
+          toast.error("Please enter your consultation fee");
+          return false;
+        }
+        const fee = parseFloat(formData.consultationFee);
+        if (isNaN(fee) || fee <= 0) {
+          toast.error("Please enter a valid consultation fee (must be greater than 0)");
+          return false;
+        }
+        if (!formData.specializations || formData.specializations.length === 0) {
           toast.error("Please add at least one specialization");
           return false;
         }
-        if (!formData.officeAddress.trim()) {
+        if (!formData.officeAddress || !formData.officeAddress.trim()) {
           toast.error("Please enter your office address");
           return false;
         }
-        if (!formData.city.trim()) {
+        if (!formData.city || !formData.city.trim()) {
           toast.error("Please enter your city");
           return false;
         }
-        if (!formData.state.trim()) {
+        if (!formData.state || !formData.state.trim()) {
           toast.error("Please enter your state");
           return false;
         }
-        if (!formData.pincode.trim() || !/^[0-9]{6}$/.test(formData.pincode)) {
+        if (!formData.pincode || !formData.pincode.trim()) {
+          toast.error("Please enter your pincode");
+          return false;
+        }
+        if (!/^[0-9]{6}$/.test(formData.pincode.trim())) {
           toast.error("Please enter a valid 6-digit pincode");
           return false;
         }
@@ -181,8 +194,12 @@ export default function LawyerSignupPage() {
   };
 
   const handleNext = () => {
-    if (validateStep(currentStep)) {
+    const isValid = validateStep(currentStep);
+    if (isValid) {
       setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
+    } else {
+      // Validation failed - error toast already shown by validateStep
+      console.log("Validation failed for step", currentStep, formData);
     }
   };
 
@@ -239,8 +256,8 @@ export default function LawyerSignupPage() {
       const { user, token } = response.data.data || response.data;
       setAuth(user, token);
 
-      toast.success("Registration successful! Your account is pending verification.");
-      router.push("/lawyer/verification-pending");
+      toast.success("Registration successful! Welcome to Vakeel Kutami.");
+      router.push("/dashboard/lawyer");
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Registration failed. Please try again."
@@ -261,7 +278,7 @@ export default function LawyerSignupPage() {
       case 4:
         return <Step4ProfileSetup formData={formData} updateFormData={updateFormData} />;
       case 5:
-        return <Step5Review formData={formData} />;
+        return <Step5Review formData={formData} onSubmit={handleSubmit} isSubmitting={isSubmitting} />;
       default:
         return null;
     }
@@ -358,11 +375,12 @@ export default function LawyerSignupPage() {
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
+                // Submit button - also available in Step5Review component
                 <Button
                   type="button"
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="bg-primary-600 hover:bg-primary-700"
+                  className="bg-primary-600 hover:bg-primary-700 text-white"
                 >
                   {isSubmitting ? (
                     <>
@@ -370,7 +388,10 @@ export default function LawyerSignupPage() {
                       Submitting...
                     </>
                   ) : (
-                    "Submit Registration"
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Submit Registration
+                    </>
                   )}
                 </Button>
               )}

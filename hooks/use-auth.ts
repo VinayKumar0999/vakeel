@@ -7,9 +7,10 @@ interface User {
   id: string;
   email: string;
   fullName: string;
-  role: "user" | "lawyer" | "admin";
+  role: "user" | "lawyer" | "admin" | "CLIENT" | "LAWYER" | "ADMIN";
   phone?: string;
   avatar?: string;
+  verificationStatus?: "PENDING" | "APPROVED" | "REJECTED" | null;
 }
 
 interface AuthState {
@@ -24,6 +25,20 @@ interface AuthState {
   setAuth: (user: User, token: string) => void;
 }
 
+// Helper function to set cookies
+const setCookie = (name: string, value: string, days: number = 7) => {
+  if (typeof window === 'undefined') return;
+  const expires = new Date();
+  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+};
+
+// Helper function to delete cookies
+const deleteCookie = (name: string) => {
+  if (typeof window === 'undefined') return;
+  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+};
+
 export const useAuth = create<AuthState>()(
   persist(
     (set) => ({
@@ -33,6 +48,18 @@ export const useAuth = create<AuthState>()(
       isLoading: false,
 
       login: (user: User, token: string) => {
+        // Set cookies for middleware
+        setCookie('auth-token', token, 7);
+        const authStorage = JSON.stringify({
+          state: {
+            user,
+            token,
+            isAuthenticated: true,
+            isLoading: false,
+          },
+        });
+        setCookie('auth-storage', encodeURIComponent(authStorage), 7);
+
         set({
           user,
           token,
@@ -42,6 +69,10 @@ export const useAuth = create<AuthState>()(
       },
 
       logout: () => {
+        // Clear cookies
+        deleteCookie('auth-token');
+        deleteCookie('auth-storage');
+
         set({
           user: null,
           token: null,
@@ -51,9 +82,24 @@ export const useAuth = create<AuthState>()(
       },
 
       updateUser: (userData: Partial<User>) => {
-        set((state) => ({
-          user: state.user ? { ...state.user, ...userData } : null,
-        }));
+        set((state) => {
+          const updatedUser = state.user ? { ...state.user, ...userData } : null;
+          
+          // Update cookie if user exists
+          if (updatedUser && state.token) {
+            const authStorage = JSON.stringify({
+              state: {
+                user: updatedUser,
+                token: state.token,
+                isAuthenticated: true,
+                isLoading: false,
+              },
+            });
+            setCookie('auth-storage', encodeURIComponent(authStorage), 7);
+          }
+
+          return { user: updatedUser };
+        });
       },
 
       setLoading: (loading: boolean) => {
@@ -61,6 +107,18 @@ export const useAuth = create<AuthState>()(
       },
 
       setAuth: (user: User, token: string) => {
+        // Set cookies for middleware
+        setCookie('auth-token', token, 7);
+        const authStorage = JSON.stringify({
+          state: {
+            user,
+            token,
+            isAuthenticated: true,
+            isLoading: false,
+          },
+        });
+        setCookie('auth-storage', encodeURIComponent(authStorage), 7);
+
         set({
           user,
           token,

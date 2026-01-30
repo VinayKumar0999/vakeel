@@ -81,7 +81,7 @@ export async function createUser(userData: CreateUserData) {
 
   // Check if email or phone already exists
   if (await emailExists(email)) {
-    throw new Error('Email already registered');
+    throw new Error('User already registered');
   }
 
   if (await phoneExists(phone)) {
@@ -90,6 +90,9 @@ export async function createUser(userData: CreateUserData) {
 
   // Hash password
   const passwordHash = await hashPassword(password);
+
+  // Auto-approve all users for now. Set to 'PENDING' for lawyers to enable admin approval flow.
+  const verificationStatus = role === 'LAWYER' ? 'APPROVED' : null;
 
   // Insert user
   const { data, error } = await supabase
@@ -100,7 +103,7 @@ export async function createUser(userData: CreateUserData) {
       phone,
       password_hash: passwordHash,
       role,
-      verification_status: role === 'LAWYER' ? 'PENDING' : null,
+      verification_status: verificationStatus,
     })
     .select()
     .single();
