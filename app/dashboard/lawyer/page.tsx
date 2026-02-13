@@ -18,8 +18,8 @@ export default function LawyerDashboard() {
         return;
       }
       
-      // Check if user has correct role
-      if (user.role !== 'LAWYER' && user.role !== 'lawyer') {
+      // Check if user has correct role (Advocate or Lawyer)
+      if (user.role !== 'ADVOCATE' && user.role !== 'advocate' && user.role !== 'LAWYER' && user.role !== 'lawyer') {
         // Redirect to appropriate dashboard based on role
         if (user.role === 'CLIENT' || user.role === 'user') {
           router.push('/dashboard/client');
@@ -126,44 +126,6 @@ export default function LawyerDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold text-blue-900">Vakeel Kutami</div>
-            <div className="flex items-center gap-4">
-              {/* Availability Toggle */}
-              <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-lg">
-                <span className="text-sm font-medium text-slate-700">Status:</span>
-                <select
-                  value={availabilityStatus}
-                  onChange={(e) => setAvailabilityStatus(e.target.value)}
-                  className="text-sm font-medium border-0 bg-transparent focus:outline-none cursor-pointer"
-                >
-                  <option value="available">🟢 Available</option>
-                  <option value="busy">🔴 Busy</option>
-                  <option value="offline">⚫ Offline</option>
-                </select>
-              </div>
-              
-              <button className="relative w-10 h-10 hover:bg-slate-100 rounded-lg flex items-center justify-center transition-colors">
-                <Bell className="w-5 h-5 text-slate-600" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
-              
-              <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-slate-900">Adv. Rajesh Kumar</div>
-                  <div className="text-xs text-slate-500">Lawyer</div>
-                </div>
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center text-xl">
-                  👨‍⚖️
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       <div className="flex">
         {/* Sidebar */}

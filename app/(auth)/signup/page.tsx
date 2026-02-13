@@ -19,10 +19,13 @@ export default function SignupPage() {
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Client Signup Card */}
-          <Card className="border-2 hover:border-primary-500 transition-all duration-300 cursor-pointer hover:shadow-xl">
-            <CardHeader className="text-center pb-4">
-              <div className="mx-auto w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">
-                <User className="w-8 h-8 text-primary-600" />
+          <Card className="border-2 hover:border-emerald-500 transition-all duration-300 cursor-pointer hover:shadow-xl">
+            <CardHeader className="text-center pb-4 relative">
+              <span className="absolute top-3 right-3 rounded-full bg-emerald-100 text-emerald-700 px-2.5 py-0.5 text-xs font-semibold">
+                Client
+              </span>
+              <div className="mx-auto w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                <User className="w-8 h-8 text-emerald-600" />
               </div>
               <CardTitle className="text-2xl">I'm a Client</CardTitle>
               <CardDescription className="text-base mt-2">
@@ -32,21 +35,21 @@ export default function SignupPage() {
             <CardContent className="space-y-4">
               <ul className="text-sm text-gray-600 space-y-2 text-left">
                 <li className="flex items-start">
-                  <span className="text-primary-600 mr-2">✓</span>
-                  <span>Find qualified lawyers</span>
+                  <span className="text-emerald-600 mr-2">✓</span>
+                  <span>Find qualified advocates</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-primary-600 mr-2">✓</span>
+                  <span className="text-emerald-600 mr-2">✓</span>
                   <span>Book consultations</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-primary-600 mr-2">✓</span>
+                  <span className="text-emerald-600 mr-2">✓</span>
                   <span>Get legal advice</span>
                 </li>
               </ul>
               <Button
                 onClick={() => router.push("/signup/client")}
-                className="w-full mt-6"
+                className="w-full mt-6 bg-emerald-600 hover:bg-emerald-700"
                 size="lg"
               >
                 Sign Up as Client
@@ -55,13 +58,16 @@ export default function SignupPage() {
             </CardContent>
           </Card>
 
-          {/* Lawyer Signup Card */}
-          <Card className="border-2 hover:border-primary-500 transition-all duration-300 cursor-pointer hover:shadow-xl">
-            <CardHeader className="text-center pb-4">
-              <div className="mx-auto w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">
-                <Scale className="w-8 h-8 text-primary-600" />
+          {/* Advocate Signup Card */}
+          <Card className="border-2 hover:border-amber-500 transition-all duration-300 cursor-pointer hover:shadow-xl">
+            <CardHeader className="text-center pb-4 relative">
+              <span className="absolute top-3 right-3 rounded-full bg-amber-100 text-amber-800 px-2.5 py-0.5 text-xs font-semibold">
+                Advocate
+              </span>
+              <div className="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                <Scale className="w-8 h-8 text-amber-600" />
               </div>
-              <CardTitle className="text-2xl">I'm a Lawyer</CardTitle>
+              <CardTitle className="text-2xl">I'm an Advocate</CardTitle>
               <CardDescription className="text-base mt-2">
                 Join our platform and grow your practice
               </CardDescription>
@@ -69,25 +75,25 @@ export default function SignupPage() {
             <CardContent className="space-y-4">
               <ul className="text-sm text-gray-600 space-y-2 text-left">
                 <li className="flex items-start">
-                  <span className="text-primary-600 mr-2">✓</span>
+                  <span className="text-amber-600 mr-2">✓</span>
                   <span>Connect with clients</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-primary-600 mr-2">✓</span>
+                  <span className="text-amber-600 mr-2">✓</span>
                   <span>Manage your practice</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-primary-600 mr-2">✓</span>
+                  <span className="text-amber-600 mr-2">✓</span>
                   <span>Build your reputation</span>
                 </li>
               </ul>
               <Button
                 onClick={() => router.push("/signup/lawyer")}
-                className="w-full mt-6"
+                className="w-full mt-6 bg-amber-600 hover:bg-amber-700"
                 size="lg"
                 variant="default"
               >
-                Sign Up as Lawyer
+                Sign Up as Advocate
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </CardContent>

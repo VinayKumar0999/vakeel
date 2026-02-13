@@ -78,7 +78,8 @@ export default function LoginPage() {
       // Save auth state (this will set cookies via useAuth hook)
       setAuth(user, token);
 
-      toast.success(`Welcome back, ${user.fullName || user.email}!`);
+      const roleLabel = user.role === "LAWYER" || user.role === "ADVOCATE" || user.role === "lawyer" ? "Advocate" : "Client";
+      toast.success(`Welcome back! You're logged in as ${roleLabel}.`);
 
       // Redirect logic based on user role
       // Priority: redirectTo param > role-based dashboard
@@ -96,7 +97,7 @@ export default function LoginPage() {
       if (user.role === "LAWYER" || user.role === "lawyer") {
         // Check verification status for lawyers
         if (user.verificationStatus && user.verificationStatus !== "APPROVED") {
-          toast("Your lawyer verification is pending. You'll be notified once approved.", {
+          toast("Your advocate verification is pending. You'll be notified once approved.", {
             icon: "⏳",
             duration: 4000,
           });
@@ -130,22 +131,44 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <Card className="border-0 shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-            <CardDescription>Login to your account</CardDescription>
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ring-2 ring-inset ${
+                  selectedRole === "CLIENT"
+                    ? "bg-emerald-50 text-emerald-700 ring-emerald-600/20"
+                    : "bg-amber-50 text-amber-700 ring-amber-600/20"
+                }`}
+                aria-live="polite"
+              >
+                {selectedRole === "CLIENT" ? "Logging in as Client" : "Logging in as Advocate"}
+              </span>
+            </div>
+            <CardDescription>Choose account type and sign in</CardDescription>
             <div className="flex gap-2 mt-3">
               <button
+                type="button"
                 onClick={() => setSelectedRole("CLIENT")}
-                className={`flex-1 px-3 py-2 rounded ${selectedRole === "CLIENT" ? "bg-primary-600 text-white" : "bg-white border"}`}
+                className={`flex-1 px-3 py-2.5 rounded-lg font-medium transition-all ${
+                  selectedRole === "CLIENT"
+                    ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-500 ring-offset-2"
+                    : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-300 hover:bg-emerald-50/50"
+                }`}
                 aria-pressed={selectedRole === "CLIENT"}
               >
                 Client
               </button>
               <button
+                type="button"
                 onClick={() => setSelectedRole("LAWYER")}
-                className={`flex-1 px-3 py-2 rounded ${selectedRole === "LAWYER" ? "bg-primary-600 text-white" : "bg-white border"}`}
+                className={`flex-1 px-3 py-2.5 rounded-lg font-medium transition-all ${
+                  selectedRole === "LAWYER"
+                    ? "bg-amber-600 text-white shadow-md ring-2 ring-amber-500 ring-offset-2"
+                    : "bg-white border border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50/50"
+                }`}
                 aria-pressed={selectedRole === "LAWYER"}
               >
-                Lawyer
+                Advocate
               </button>
             </div>
           </CardHeader>
@@ -255,8 +278,8 @@ export default function LoginPage() {
               </div>
 
               <div className="text-center text-sm">
-                <span className="text-gray-600">Are you a lawyer? </span>
-                <Link href="/signup/lawyer" className="text-primary-600 hover:text-primary-700 font-medium">Register as Lawyer →</Link>
+                <span className="text-gray-600">Are you an advocate? </span>
+                <Link href="/signup/lawyer" className="text-primary-600 hover:text-primary-700 font-medium">Register as Advocate →</Link>
               </div>
             </form>
           </CardContent>

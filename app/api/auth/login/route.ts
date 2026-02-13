@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserByEmail, verifyPassword } from "@/lib/db-helpers";
 import { createServerClient } from "@/lib/supabase";
+import { getPublicUrl, LAWYER_DOCUMENTS_BUCKET } from "@/lib/storage-helpers";
 
 const supabase = createServerClient();
 
@@ -58,13 +59,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Fetch profile photo if user is a lawyer/advocate
+    let profilePhoto = null;
+    if (user.role === 'LAWYER' || user.role === 'ADVOCATE') {
+      const { data: profile, error: profileError } = await supabase
+        .from('lawyer_profiles')
+        .select('profile_photo_path')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (profile?.profile_photo_path) {
+        // If it's already a full URL, use it directly
+        if (profile.profile_photo_path.startsWith('http://') || profile.profile_photo_path.startsWith('https://')) {
+          profilePhoto = profile.profile_photo_path;
+        } else {
+          // Convert relative path to public URL
+          // The path stored should be like "profile-photos/user-id-timestamp-filename.jpg"
+          profilePhoto = getPublicUrl(LAWYER_DOCUMENTS_BUCKET, profile.profile_photo_path);
+        }
+      }
+    }
+
     // Format response to match frontend expectations
+    // Convert LAWYER role to ADVOCATE
+    const userRole = user.role === 'LAWYER' ? 'ADVOCATE' : user.role;
+    
     const responseUser = {
       id: user.id,
       fullName: user.full_name,
       email: user.email,
       phone: user.phone,
-      role: user.role,
+      role: userRole,
+      avatar: profilePhoto,
       verificationStatus: user.verification_status,
       createdAt: user.created_at,
     };

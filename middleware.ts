@@ -42,7 +42,7 @@ export function middleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith('/dashboard/client')) {
       if (userRole && userRole !== 'CLIENT' && userRole !== 'user') {
         // Redirect to appropriate dashboard based on role
-        if (userRole === 'LAWYER' || userRole === 'lawyer') {
+        if (userRole === 'LAWYER' || userRole === 'lawyer' || userRole === 'ADVOCATE' || userRole === 'advocate') {
           return NextResponse.redirect(new URL('/dashboard/lawyer', request.url))
         }
         return NextResponse.redirect(new URL('/login', request.url))
@@ -50,7 +50,7 @@ export function middleware(request: NextRequest) {
     }
 
     if (request.nextUrl.pathname.startsWith('/dashboard/lawyer')) {
-      if (userRole && userRole !== 'LAWYER' && userRole !== 'lawyer') {
+      if (userRole && userRole !== 'LAWYER' && userRole !== 'lawyer' && userRole !== 'ADVOCATE' && userRole !== 'advocate') {
         // Redirect to appropriate dashboard based on role
         if (userRole === 'CLIENT' || userRole === 'user') {
           return NextResponse.redirect(new URL('/dashboard/client', request.url))
@@ -69,8 +69,8 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl)
     }
 
-    // Check if user is a lawyer
-    if (userRole && userRole !== 'LAWYER' && userRole !== 'lawyer') {
+    // Check if user is an advocate/lawyer
+    if (userRole && userRole !== 'LAWYER' && userRole !== 'lawyer' && userRole !== 'ADVOCATE' && userRole !== 'advocate') {
       return NextResponse.redirect(new URL('/login', request.url))
     }
   }

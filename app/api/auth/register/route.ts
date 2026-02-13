@@ -4,61 +4,69 @@ import { uploadLawyerDocuments } from "@/lib/storage-helpers";
 
 export async function POST(request: NextRequest) {
   try {
-    // Handle both JSON and FormData requests
     const contentType = request.headers.get("content-type") || "";
-    let formData: FormData;
-    let isJsonRequest = false;
+    const isJsonRequest = contentType.includes("application/json");
 
-    if (contentType.includes("application/json")) {
-      // Client registration sends JSON
-      isJsonRequest = true;
-      const jsonData = await request.json();
-      // Convert JSON to FormData for unified handling
-      formData = new FormData();
-      Object.keys(jsonData).forEach((key) => {
-        formData.append(key, String(jsonData[key]));
-      });
+    // Advocate signup without files sends JSON; client signup sends JSON; legacy FormData with files supported
+    let body: Record<string, unknown> = {};
+    let formData: FormData | null = null;
+
+    if (isJsonRequest) {
+      body = (await request.json()) as Record<string, unknown>;
     } else {
-      // Lawyer registration sends FormData (multipart/form-data)
       formData = await request.formData();
     }
 
-    const role = formData.get("role") as string;
+    const role = (isJsonRequest ? body.role : formData!.get("role")) as string;
 
-    // Handle Lawyer Registration
+    // Handle Lawyer/Advocate Registration
     if (role === "LAWYER") {
-      // Extract text fields
-      const fullName = formData.get("fullName") as string;
-      const email = formData.get("email") as string;
-      const phone = formData.get("phone") as string;
-      const password = formData.get("password") as string;
-      const barCouncilNumber = formData.get("barCouncilNumber") as string;
-      const barCouncilState = formData.get("barCouncilState") as string;
-      const practiceAreas = formData.get("practiceAreas") as string;
-      const yearsOfExperience = formData.get("yearsOfExperience") as string;
-      const education = formData.get("education") as string;
-      const languages = formData.get("languages") as string;
-      const bio = formData.get("bio") as string;
-      const consultationFee = formData.get("consultationFee") as string;
-      const specializations = formData.get("specializations") as string;
-      const officeAddress = formData.get("officeAddress") as string;
-      const city = formData.get("city") as string;
-      const state = formData.get("state") as string;
-      const pincode = formData.get("pincode") as string;
+      const fullName = (isJsonRequest ? body.fullName : formData!.get("fullName")) as string;
+      const email = (isJsonRequest ? body.email : formData!.get("email")) as string;
+      const phone = (isJsonRequest ? body.phone : formData!.get("phone")) as string;
+      const password = (isJsonRequest ? body.password : formData!.get("password")) as string;
+      const barCouncilNumber = (isJsonRequest ? body.barCouncilNumber : formData!.get("barCouncilNumber")) as string;
+      const barCouncilState = (isJsonRequest ? body.barCouncilState : formData!.get("barCouncilState")) as string;
+      const yearsOfExperience = (isJsonRequest ? body.yearsOfExperience : formData!.get("yearsOfExperience")) as string;
+      const education = (isJsonRequest ? body.education : formData!.get("education")) as string;
+      const bio = (isJsonRequest ? body.bio : formData!.get("bio")) as string;
+      const consultationFee = (isJsonRequest ? body.consultationFee : formData!.get("consultationFee")) as string;
+      const officeAddress = (isJsonRequest ? body.officeAddress : formData!.get("officeAddress")) as string;
+      const city = (isJsonRequest ? body.city : formData!.get("city")) as string;
+      const state = (isJsonRequest ? body.state : formData!.get("state")) as string;
+      const pincode = (isJsonRequest ? body.pincode : formData!.get("pincode")) as string;
 
-      // Validate required fields
-      const requiredFields = {
+      let practiceAreasArr: string[] = [];
+      let languagesArr: string[] = [];
+      let specializationsArr: string[] = [];
+
+      if (isJsonRequest) {
+        practiceAreasArr = Array.isArray(body.practiceAreas) ? (body.practiceAreas as string[]) : [];
+        languagesArr = Array.isArray(body.languages) ? (body.languages as string[]) : [];
+        specializationsArr = Array.isArray(body.specializations) ? (body.specializations as string[]) : practiceAreasArr;
+      } else {
+        try {
+          practiceAreasArr = JSON.parse((formData!.get("practiceAreas") as string) || "[]");
+          languagesArr = JSON.parse((formData!.get("languages") as string) || "[]");
+          specializationsArr = JSON.parse((formData!.get("specializations") as string) || "[]");
+        } catch (e) {
+          return NextResponse.json(
+            { message: "Invalid JSON format in arrays" },
+            { status: 400 }
+          );
+        }
+      }
+
+      const requiredFields: Record<string, unknown> = {
         fullName,
         email,
         phone,
         password,
         barCouncilNumber,
         barCouncilState,
-        practiceAreas,
         yearsOfExperience,
         bio,
         consultationFee,
-        specializations,
         officeAddress,
         city,
         state,
@@ -66,7 +74,7 @@ export async function POST(request: NextRequest) {
       };
 
       for (const [field, value] of Object.entries(requiredFields)) {
-        if (!value || (typeof value === "string" && value.trim() === "")) {
+        if (value == null || (typeof value === "string" && value.trim() === "")) {
           return NextResponse.json(
             { message: `${field} is required` },
             { status: 400 }
@@ -74,7 +82,6 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         return NextResponse.json(
@@ -83,7 +90,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Validate phone (10 digits)
       const cleanPhone = phone.replace(/\D/g, "");
       if (!/^[0-9]{10}$/.test(cleanPhone)) {
         return NextResponse.json(
@@ -92,7 +98,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Validate password length
       if (password.length < 8) {
         return NextResponse.json(
           { message: "Password must be at least 8 characters" },
@@ -100,7 +105,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Validate bio length
       if (bio.length < 50) {
         return NextResponse.json(
           { message: "Bio must be at least 50 characters" },
@@ -108,7 +112,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Validate pincode (6 digits)
       if (!/^[0-9]{6}$/.test(pincode)) {
         return NextResponse.json(
           { message: "Invalid pincode. Must be 6 digits" },
@@ -116,7 +119,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Validate consultation fee
       const fee = parseFloat(consultationFee);
       if (isNaN(fee) || fee <= 0) {
         return NextResponse.json(
@@ -125,7 +127,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Check if email or phone already exists
       if (await emailExists(email)) {
         return NextResponse.json(
           { message: "Advocate already registered" },
@@ -140,42 +141,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Handle file uploads
-      const barCertificate = formData.get("barCertificate") as File | null;
-      const idProof = formData.get("idProof") as File | null;
-      const profilePhoto = formData.get("profilePhoto") as File | null;
-
-      if (!barCertificate) {
-        return NextResponse.json(
-          { message: "Bar Certificate is required" },
-          { status: 400 }
-        );
-      }
-
-      if (!idProof) {
-        return NextResponse.json(
-          { message: "ID Proof is required" },
-          { status: 400 }
-        );
-      }
-
-      // Parse JSON arrays
-      let practiceAreasArr: string[] = [];
-      let languagesArr: string[] = [];
-      let specializationsArr: string[] = [];
-
-      try {
-        practiceAreasArr = JSON.parse(practiceAreas);
-        languagesArr = JSON.parse(languages);
-        specializationsArr = JSON.parse(specializations);
-      } catch (e) {
-        return NextResponse.json(
-          { message: "Invalid JSON format in arrays" },
-          { status: 400 }
-        );
-      }
-
-      // Validate arrays
       if (!Array.isArray(practiceAreasArr) || practiceAreasArr.length === 0) {
         return NextResponse.json(
           { message: "At least one practice area is required" },
@@ -191,13 +156,9 @@ export async function POST(request: NextRequest) {
       }
 
       if (!Array.isArray(specializationsArr) || specializationsArr.length === 0) {
-        return NextResponse.json(
-          { message: "At least one specialization is required" },
-          { status: 400 }
-        );
+        specializationsArr = practiceAreasArr;
       }
 
-      // Create user first
       const user = await createUser({
         fullName,
         email,
@@ -206,14 +167,20 @@ export async function POST(request: NextRequest) {
         role: "LAWYER",
       });
 
-      // Upload documents to Supabase Storage
-      const documentPaths = await uploadLawyerDocuments(user.id, {
-        barCertificate,
-        idProof,
-        profilePhoto: profilePhoto || undefined,
-      });
+      let documentPaths: { barCertificatePath?: string; idProofPath?: string; profilePhotoPath?: string } = {};
+      if (formData) {
+        const barCertificate = formData.get("barCertificate") as File | null;
+        const idProof = formData.get("idProof") as File | null;
+        const profilePhoto = formData.get("profilePhoto") as File | null;
+        if (barCertificate || idProof || profilePhoto) {
+          documentPaths = await uploadLawyerDocuments(user.id, {
+            barCertificate: barCertificate || undefined,
+            idProof: idProof || undefined,
+            profilePhoto: profilePhoto || undefined,
+          });
+        }
+      }
 
-      // Create lawyer profile
       const lawyerProfile = await createLawyerProfile({
         userId: user.id,
         barCouncilNumber,
@@ -235,12 +202,19 @@ export async function POST(request: NextRequest) {
       });
 
       // Format response to match frontend expectations
+      // Convert LAWYER role to ADVOCATE for frontend
+      const userRole = user.role === 'LAWYER' ? 'ADVOCATE' : user.role;
+      
+      // Use profile photo from lawyer profile (stored in DB) or from uploaded paths
+      const profilePhotoUrl = lawyerProfile.profile_photo_path || documentPaths.profilePhotoPath || null;
+      
       const responseUser = {
         id: user.id,
         fullName: user.full_name,
         email: user.email,
         phone: user.phone,
-        role: user.role,
+        role: userRole,
+        avatar: profilePhotoUrl,
         verificationStatus: user.verification_status,
         createdAt: user.created_at,
       };
@@ -270,10 +244,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Handle Client Registration
-    const fullName = formData.get("fullName") as string;
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-    const password = formData.get("password") as string;
+    const fullName = (isJsonRequest ? body.fullName : formData!.get("fullName")) as string;
+    const email = (isJsonRequest ? body.email : formData!.get("email")) as string;
+    const phone = (isJsonRequest ? body.phone : formData!.get("phone")) as string;
+    const password = (isJsonRequest ? body.password : formData!.get("password")) as string;
 
     // Validate client registration
     if (!fullName || !email || !phone || !password) {
@@ -355,9 +329,23 @@ export async function POST(request: NextRequest) {
     );
   } catch (error: any) {
     console.error("Registration error:", error);
+    const message =
+      error?.message ||
+      (error?.cause && String(error.cause)) ||
+      "Registration failed. Please try again.";
+    const isSupabaseDown =
+      message.includes("Supabase is unavailable") ||
+      message.includes("fetch failed") ||
+      message.includes("ECONNREFUSED") ||
+      message.includes("521") ||
+      message.toLowerCase().includes("timed out") ||
+      message.toLowerCase().includes("timeout");
     return NextResponse.json(
       {
-        message: error.message || "Registration failed. Please try again.",
+        message,
+        ...(isSupabaseDown && {
+          hint: "Supabase may be paused or slow. Go to https://supabase.com/dashboard → your project → Settings → General → Resume project (if paused). Then try again.",
+        }),
       },
       { status: 500 }
     );

@@ -109,7 +109,19 @@ export async function createUser(userData: CreateUserData) {
     .single();
 
   if (error) {
-    throw new Error(`Failed to create user: ${error.message}`);
+    const raw = error.message || error.code || String(error);
+    // Supabase can return HTML (e.g. Cloudflare 521) when project is paused or down
+    if (
+      typeof raw === "string" &&
+      (raw.includes("521") ||
+        raw.includes("Web server is down") ||
+        raw.includes("<!DOCTYPE html>"))
+    ) {
+      throw new Error(
+        "Supabase is unavailable (server down or project paused). Open Supabase Dashboard → your project → Settings and resume the project if it is paused."
+      );
+    }
+    throw new Error(`Failed to create user: ${raw}`);
   }
 
   return data;

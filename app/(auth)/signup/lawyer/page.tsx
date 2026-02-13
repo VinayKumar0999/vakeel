@@ -9,10 +9,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { authAPI } from "@/lib/api";
 import toast from "react-hot-toast";
 
-// Import step components
+// Import step components (no documents step)
 import Step1BasicInfo from "./components/Step1BasicInfo";
 import Step2ProfessionalDetails from "./components/Step2ProfessionalDetails";
-import Step3Documents from "./components/Step3Documents";
 import Step4ProfileSetup from "./components/Step4ProfileSetup";
 import Step5Review from "./components/Step5Review";
 
@@ -24,7 +23,7 @@ export interface LawyerSignupData {
   password: string;
   confirmPassword: string;
 
-  // Step 2: Professional Details
+  // Step 2: Professional Details (practice areas used as specializations too)
   barCouncilNumber: string;
   barCouncilState: string;
   practiceAreas: string[];
@@ -32,22 +31,16 @@ export interface LawyerSignupData {
   education: string;
   languages: string[];
 
-  // Step 3: Documents
-  barCertificate: File | null;
-  idProof: File | null;
-  profilePhoto: File | null;
-
-  // Step 4: Profile Setup
+  // Step 3: Profile Setup
   bio: string;
   consultationFee: string;
-  specializations: string[];
   officeAddress: string;
   city: string;
   state: string;
   pincode: string;
 }
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 4;
 
 export default function LawyerSignupPage() {
   const router = useRouter();
@@ -70,15 +63,9 @@ export default function LawyerSignupPage() {
     education: "",
     languages: [],
 
-    // Step 3
-    barCertificate: null,
-    idProof: null,
-    profilePhoto: null,
-
-    // Step 4
+    // Step 3 (Profile)
     bio: "",
     consultationFee: "",
-    specializations: [],
     officeAddress: "",
     city: "",
     state: "",
@@ -134,17 +121,6 @@ export default function LawyerSignupPage() {
         return true;
 
       case 3:
-        if (!formData.barCertificate) {
-          toast.error("Please upload your Bar Certificate");
-          return false;
-        }
-        if (!formData.idProof) {
-          toast.error("Please upload your ID Proof");
-          return false;
-        }
-        return true;
-
-      case 4:
         if (!formData.bio.trim()) {
           toast.error("Please enter your professional bio");
           return false;
@@ -160,10 +136,6 @@ export default function LawyerSignupPage() {
         const fee = parseFloat(formData.consultationFee);
         if (isNaN(fee) || fee <= 0) {
           toast.error("Please enter a valid consultation fee (must be greater than 0)");
-          return false;
-        }
-        if (!formData.specializations || formData.specializations.length === 0) {
-          toast.error("Please add at least one specialization");
           return false;
         }
         if (!formData.officeAddress || !formData.officeAddress.trim()) {
@@ -208,52 +180,43 @@ export default function LawyerSignupPage() {
   };
 
   const handleSubmit = async () => {
-    if (!validateStep(5)) return;
+    if (!validateStep(4)) return;
 
     setIsSubmitting(true);
 
     try {
-      // Create FormData for file uploads
-      const submitData = new FormData();
+      // No file uploads - use JSON for advocate signup
+      const payload = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: "LAWYER",
+        barCouncilNumber: formData.barCouncilNumber,
+        barCouncilState: formData.barCouncilState,
+        practiceAreas: formData.practiceAreas,
+        yearsOfExperience: formData.yearsOfExperience,
+        education: formData.education,
+        languages: formData.languages,
+        bio: formData.bio,
+        consultationFee: formData.consultationFee,
+        specializations: formData.practiceAreas,
+        officeAddress: formData.officeAddress,
+        city: formData.city,
+        state: formData.state,
+        pincode: formData.pincode,
+      };
+
+      const response = await authAPI.register(payload);
+
+      const responseData = response.data.data || response.data;
+      const { user, token, lawyerProfile } = responseData;
       
-      // Basic info
-      submitData.append("fullName", formData.fullName);
-      submitData.append("email", formData.email);
-      submitData.append("phone", formData.phone);
-      submitData.append("password", formData.password);
-      submitData.append("role", "LAWYER");
-
-      // Professional details
-      submitData.append("barCouncilNumber", formData.barCouncilNumber);
-      submitData.append("barCouncilState", formData.barCouncilState);
-      submitData.append("practiceAreas", JSON.stringify(formData.practiceAreas));
-      submitData.append("yearsOfExperience", formData.yearsOfExperience);
-      submitData.append("education", formData.education);
-      submitData.append("languages", JSON.stringify(formData.languages));
-
-      // Documents
-      if (formData.barCertificate) {
-        submitData.append("barCertificate", formData.barCertificate);
+      // Ensure avatar is included in user object (fallback to lawyerProfile if not set)
+      if (!user.avatar && lawyerProfile?.profilePhotoPath) {
+        user.avatar = lawyerProfile.profilePhotoPath;
       }
-      if (formData.idProof) {
-        submitData.append("idProof", formData.idProof);
-      }
-      if (formData.profilePhoto) {
-        submitData.append("profilePhoto", formData.profilePhoto);
-      }
-
-      // Profile setup
-      submitData.append("bio", formData.bio);
-      submitData.append("consultationFee", formData.consultationFee);
-      submitData.append("specializations", JSON.stringify(formData.specializations));
-      submitData.append("officeAddress", formData.officeAddress);
-      submitData.append("city", formData.city);
-      submitData.append("state", formData.state);
-      submitData.append("pincode", formData.pincode);
-
-      const response = await authAPI.register(submitData);
-
-      const { user, token } = response.data.data || response.data;
+      
       setAuth(user, token);
 
       toast.success("Registration successful! Welcome to Vakeel Kutami.");
@@ -274,10 +237,8 @@ export default function LawyerSignupPage() {
       case 2:
         return <Step2ProfessionalDetails formData={formData} updateFormData={updateFormData} />;
       case 3:
-        return <Step3Documents formData={formData} updateFormData={updateFormData} />;
-      case 4:
         return <Step4ProfileSetup formData={formData} updateFormData={updateFormData} />;
-      case 5:
+      case 4:
         return <Step5Review formData={formData} onSubmit={handleSubmit} isSubmitting={isSubmitting} />;
       default:
         return null;
@@ -287,7 +248,6 @@ export default function LawyerSignupPage() {
   const stepTitles = [
     "Basic Information",
     "Professional Details",
-    "Documents",
     "Profile Setup",
     "Review & Submit",
   ];
@@ -297,10 +257,13 @@ export default function LawyerSignupPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">
-            <Scale className="w-8 h-8 text-primary-600" />
+          <div className="inline-flex items-center rounded-full bg-amber-100 text-amber-800 px-4 py-1.5 text-sm font-semibold mb-4 ring-2 ring-amber-200">
+            You are signing up as an Advocate
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Lawyer Registration</h1>
+          <div className="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+            <Scale className="w-8 h-8 text-amber-600" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Advocate Registration</h1>
           <p className="text-gray-600">Complete your profile to join our platform</p>
         </div>
 

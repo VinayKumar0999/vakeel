@@ -88,7 +88,7 @@ export default function ClientSignupPage() {
       const { user, token } = response.data.data || response.data;
       setAuth(user, token);
 
-      toast.success("Account created successfully! Welcome to Vakeel Kutami!");
+      toast.success("Account created as Client! Welcome to Vakeel Kutami!");
       router.push("/dashboard/client");
     } catch (error: any) {
       const msg = error.response?.data?.message || "Signup failed. Please try again.";
@@ -106,13 +106,16 @@ export default function ClientSignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
       <div className="w-full max-w-md">
-        <Card className="border-0 shadow-xl">
+        <Card className="border-0 shadow-xl overflow-hidden">
+          <div className="bg-emerald-600 px-4 py-2 text-center">
+            <span className="text-sm font-semibold text-white tracking-wide">You are signing up as a Client</span>
+          </div>
           <CardHeader className="space-y-1 text-center">
-            <div className="mx-auto w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">
-              <User className="w-8 h-8 text-primary-600" />
+            <div className="mx-auto w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+              <User className="w-8 h-8 text-emerald-600" />
             </div>
             <CardTitle className="text-2xl font-bold">Create Client Account</CardTitle>
-            <CardDescription>Sign up to find and consult with lawyers</CardDescription>
+            <CardDescription>Sign up to find and consult with advocates</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
