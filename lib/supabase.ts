@@ -67,9 +67,9 @@ async function serverFetchWithTimeout(input: RequestInfo | URL, init?: RequestIn
   }
 }
 
-// Server-side client (for API routes)
-// Uses service role key and a fetch with long timeout + retries to avoid DB/Storage timeouts
-export const createServerClient = () => {
+// Server-side client (for API routes). Returns a lazy proxy so env is only read when the client
+// is first used (e.g. in a request handler), not at module load — allows build without env.
+function createServerClientInstance(): SupabaseClient {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!serviceRoleKey) {
     throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY')
@@ -85,3 +85,19 @@ export const createServerClient = () => {
     },
   })
 }
+
+let _serverInstance: SupabaseClient | null = null
+function getServerClient(): SupabaseClient {
+  if (!_serverInstance) {
+    _serverInstance = createServerClientInstance()
+  }
+  return _serverInstance
+}
+
+/** Server-side Supabase client. Lazy: no env read until first use, so build succeeds without env. */
+export const createServerClient = () =>
+  new Proxy({} as SupabaseClient, {
+    get(_, prop) {
+      return (getServerClient() as unknown as Record<string | symbol, unknown>)[prop]
+    },
+  })

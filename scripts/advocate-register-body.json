@@ -1,0 +1,20 @@
+{
+  "fullName": "Adv. Priya Sharma",
+  "email": "priya.advocate@example.com",
+  "phone": "9876543210",
+  "password": "advocate123",
+  "role": "LAWYER",
+  "barCouncilNumber": "BCN98765",
+  "barCouncilState": "Telangana",
+  "practiceAreas": ["Criminal Law", "Family Law", "Civil Law"],
+  "yearsOfExperience": "5-10",
+  "education": "LLB from NALSAR, Hyderabad. LLM in Criminal Law.",
+  "languages": ["Hindi", "English", "Telugu"],
+  "bio": "Practising advocate with over 8 years of experience in criminal and family matters. Specialised in bail applications, domestic violence cases, and child custody. Committed to accessible legal support.",
+  "consultationFee": "800",
+  "specializations": ["Criminal Law", "Family Law", "Civil Law"],
+  "officeAddress": "Plot 45, Legal Complex, Secunderabad",
+  "city": "Hyderabad",
+  "state": "Telangana",
+  "pincode": "500003"
+}
