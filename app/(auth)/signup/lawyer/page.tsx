@@ -38,6 +38,11 @@ export interface LawyerSignupData {
   city: string;
   state: string;
   pincode: string;
+
+  // Optional document fields (used by Step3Documents if that step is enabled)
+  barCertificate?: File | null;
+  idProof?: File | null;
+  profilePhoto?: File | null;
 }
 
 const TOTAL_STEPS = 4;

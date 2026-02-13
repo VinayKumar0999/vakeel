@@ -7,7 +7,7 @@ interface User {
   id: string;
   email: string;
   fullName: string;
-  role: "user" | "lawyer" | "advocate" | "admin" | "CLIENT" | "LAWYER" | "ADVOCATE" | "ADMIN";
+  role: "user" | "lawyer" | "advocate" | "admin" | "CLIENT" | "LAWYER" | "ADVOCATE" | "ADMIN" | "SUPER_ADMIN" | "AGENCY_ADMIN";
   phone?: string;
   avatar?: string;
   verificationStatus?: "PENDING" | "APPROVED" | "REJECTED" | null;

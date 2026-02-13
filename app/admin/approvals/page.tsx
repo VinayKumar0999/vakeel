@@ -98,7 +98,7 @@ export default function AdminApprovalsPage() {
         setPendingLawyers(lawyersData.data || []);
       }
 
-      if (agenciesRes.ok && (user?.role === "SUPER_ADMIN" || user?.role === "ADMIN")) {
+      if (agenciesRes instanceof Response && agenciesRes.ok && (user?.role === "SUPER_ADMIN" || user?.role === "ADMIN")) {
         const agenciesData = await agenciesRes.json();
         setPendingAgencies(agenciesData.data || []);
       }

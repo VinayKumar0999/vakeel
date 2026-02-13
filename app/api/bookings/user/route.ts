@@ -9,7 +9,7 @@ function getClientIdFromToken(request: NextRequest): string | null {
   if (!token) {
     const cookieHeader = request.headers.get("cookie");
     const match = cookieHeader?.match(/\bauth-token=([^;]+)/);
-    token = match ? decodeURIComponent(match[1].trim()) : null;
+    token = match ? decodeURIComponent(match[1].trim()) : undefined;
   }
   if (!token?.startsWith("supabase-token-")) return null;
   return token.replace("supabase-token-", "");

@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, FileText, User, Briefcase, MapPin, Send } from "lucide-react";
+import { CheckCircle2, User, Briefcase, MapPin, Send } from "lucide-react";
 import type { LawyerSignupData } from "../page";
 
 interface Step5ReviewProps {
@@ -103,29 +103,6 @@ export default function Step5Review({ formData, onSubmit, isSubmitting = false }
         </div>
       </ReviewSection>
 
-      <ReviewSection icon={FileText} title="Documents">
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Bar Certificate:</span>
-            <span className="font-medium text-green-600">
-              {formData.barCertificate ? "✓ Uploaded" : "✗ Missing"}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">ID Proof:</span>
-            <span className="font-medium text-green-600">
-              {formData.idProof ? "✓ Uploaded" : "✗ Missing"}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Profile Photo:</span>
-            <span className="font-medium">
-              {formData.profilePhoto ? "✓ Uploaded" : "Optional"}
-            </span>
-          </div>
-        </div>
-      </ReviewSection>
-
       <ReviewSection icon={User} title="Profile Setup">
         <div className="space-y-2 text-sm">
           <div>
@@ -136,21 +113,6 @@ export default function Step5Review({ formData, onSubmit, isSubmitting = false }
             <span className="text-gray-600">Consultation Fee:</span>
             <span className="font-medium">₹{formData.consultationFee}</span>
           </div>
-          {formData.specializations.length > 0 && (
-            <div className="mt-3">
-              <span className="text-gray-600 block mb-1">Specializations:</span>
-              <div className="flex flex-wrap gap-2">
-                {formData.specializations.map((spec) => (
-                  <span
-                    key={spec}
-                    className="px-2 py-1 bg-primary-100 text-primary-800 rounded text-xs"
-                  >
-                    {spec}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </ReviewSection>
 

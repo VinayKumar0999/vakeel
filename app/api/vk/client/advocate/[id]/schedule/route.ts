@@ -4,9 +4,12 @@ import { createServerClient } from '@/lib/supabase';
 
 const supabase = createServerClient();
 
-export const GET = withAuth(async (request, context, { params }: { params: { id: string } }) => {
+export const GET = withAuth(async (request, context) => {
   try {
-    const advocateId = parseInt(params.id);
+    const pathSegments = request.nextUrl.pathname.split('/');
+    const idIndex = pathSegments.indexOf('advocate') + 1;
+    const idParam = pathSegments[idIndex];
+    const advocateId = idParam ? parseInt(idParam, 10) : NaN;
     
     if (isNaN(advocateId)) {
       return NextResponse.json(
