@@ -1,14 +1,33 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+// Don't throw at module load so build can complete when env is not available (e.g. CI).
+// Validation happens when the client is first used.
+function getSupabaseUrl(): string {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!url) throw new Error('Missing Supabase environment variables (NEXT_PUBLIC_SUPABASE_URL)')
+  return url
 }
 
-// Client-side Supabase client (for use in React components)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+function getSupabaseAnonKey(): string {
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!key) throw new Error('Missing Supabase environment variables (NEXT_PUBLIC_SUPABASE_ANON_KEY)')
+  return key
+}
+
+let _client: SupabaseClient | null = null
+function getBrowserClient(): SupabaseClient {
+  if (!_client) {
+    _client = createClient(getSupabaseUrl(), getSupabaseAnonKey())
+  }
+  return _client
+}
+
+// Client-side Supabase client (for use in React components). Throws only when first used if env is missing.
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_, prop) {
+    return (getBrowserClient() as unknown as Record<string | symbol, unknown>)[prop]
+  },
+})
 
 const SERVER_FETCH_TIMEOUT_MS = 90_000  // 90s for Storage/DB when project is slow or waking
 const SERVER_FETCH_MAX_RETRIES = 3
@@ -51,12 +70,11 @@ async function serverFetchWithTimeout(input: RequestInfo | URL, init?: RequestIn
 // Server-side client (for API routes)
 // Uses service role key and a fetch with long timeout + retries to avoid DB/Storage timeouts
 export const createServerClient = () => {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!serviceRoleKey) {
     throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY')
   }
-  
+  const supabaseUrl = getSupabaseUrl()
   return createClient(supabaseUrl, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
