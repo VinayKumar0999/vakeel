@@ -1,34 +1,102 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Video, Calendar, FileText, CreditCard, Settings, MessageCircle, Clock, Star, Search, Bell, LogOut, Home, User, Download, ChevronRight, PlayCircle } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { bookingAPI } from '@/lib/api';
+
+interface UpcomingConsultation {
+  id: string;
+  lawyer: string;
+  lawyerId: string;
+  photo?: string | null;
+  expertise?: string;
+  date: string;
+  time: string;
+  duration: number;
+  status: string;
+  meetingLink?: string;
+}
 
 export default function ClientDashboard() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
-  
-  const upcomingConsultations = [
-    {
-      id: 1,
-      lawyer: "Adv. Rajesh Kumar",
-      photo: "👨‍⚖️",
-      expertise: "Corporate Law",
-      date: "Today",
-      time: "04:00 PM",
-      duration: 30,
-      status: "confirmed",
-      meetingLink: "#"
-    },
-    {
-      id: 2,
-      lawyer: "Adv. Priya Sharma",
-      photo: "👩‍⚖️",
-      expertise: "Family Law",
-      date: "Tomorrow",
-      time: "11:00 AM",
-      duration: 30,
-      status: "confirmed",
-      meetingLink: "#"
+  const [upcomingConsultations, setUpcomingConsultations] = useState<UpcomingConsultation[]>([]);
+  const [pastConsultationsList, setPastConsultationsList] = useState<UpcomingConsultation[]>([]);
+  const [loadingBookings, setLoadingBookings] = useState(true);
+
+  // Protect route - check authentication
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated || !user) {
+        router.push('/login?redirect=/dashboard/client');
+        return;
+      }
+      
+      // Check if user has correct role
+      if (user.role !== 'CLIENT' && user.role !== 'user') {
+        // Redirect to appropriate dashboard based on role
+        if (user.role === 'LAWYER' || user.role === 'lawyer') {
+          router.push('/dashboard/lawyer');
+        } else {
+          router.push('/login');
+        }
+      }
     }
-  ];
+  }, [isAuthenticated, user, isLoading, router]);
+
+  // Fetch client's upcoming bookings
+  useEffect(() => {
+    if (!isAuthenticated || !user) return;
+    (async () => {
+      setLoadingBookings(true);
+      try {
+        const res = await bookingAPI.getUserBookings();
+        const raw = res.data;
+        const upcoming = Array.isArray(raw?.upcoming) ? raw.upcoming : [];
+        const toConsultation = (b: any) => {
+          const at = b.scheduledAt ? new Date(b.scheduledAt) : new Date();
+          const dateStr = at.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+          const timeStr = at.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+          const isToday = at.toDateString() === new Date().toDateString();
+          return {
+            id: b.id,
+            lawyer: b.lawyer || 'Advocate',
+            lawyerId: b.lawyerId,
+            photo: null,
+            expertise: b.notes ? b.notes.slice(0, 40) + (b.notes.length > 40 ? '…' : '') : 'Online consultation',
+            date: isToday ? 'Today' : dateStr,
+            time: timeStr,
+            duration: b.durationMinutes || 30,
+            status: b.status || 'confirmed',
+            meetingLink: '#',
+          };
+        };
+        setUpcomingConsultations(upcoming.map(toConsultation));
+        const past = Array.isArray(raw?.past) ? raw.past : [];
+        setPastConsultationsList(past.map(toConsultation));
+      } catch (_) {
+        setUpcomingConsultations([]);
+      } finally {
+        setLoadingBookings(false);
+      }
+    })();
+  }, [isAuthenticated, user]);
+
+  // Show loading state while checking auth
+  if (isLoading || !isAuthenticated || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+  
 
   const pastConsultations = [
     {
@@ -63,38 +131,32 @@ export default function ClientDashboard() {
   ];
 
   const stats = [
-    { label: "Total Consultations", value: "12", icon: Video, color: "bg-blue-500" },
-    { label: "Upcoming", value: "2", icon: Calendar, color: "bg-green-500" },
+    { label: "Total Consultations", value: String(pastConsultationsList.length + upcomingConsultations.length), icon: Video, color: "bg-blue-500" },
+    { label: "Upcoming", value: String(upcomingConsultations.length), icon: Calendar, color: "bg-green-500" },
     { label: "Documents", value: "8", icon: FileText, color: "bg-purple-500" },
-    { label: "Total Spent", value: "₹18,000", icon: CreditCard, color: "bg-amber-500" }
   ];
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
+  const getDashboardLink = () => {
+    if (!user) return '/login';
+    if (user.role === 'LAWYER' || user.role === 'lawyer') {
+      return '/dashboard/lawyer';
+    }
+    if (user.role === 'CLIENT' || user.role === 'user') {
+      return '/dashboard/client';
+    }
+    if (user.role === 'ADMIN' || user.role === 'admin') {
+      return '/admin';
+    }
+    return '/dashboard/client';
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold text-blue-900">Vakeel Kutami</div>
-            <div className="flex items-center gap-4">
-              <button className="relative w-10 h-10 hover:bg-slate-100 rounded-lg flex items-center justify-center transition-colors">
-                <Bell className="w-5 h-5 text-slate-600" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
-              <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-slate-900">John Doe</div>
-                  <div className="text-xs text-slate-500">Client</div>
-                </div>
-                <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center text-white font-semibold">
-                  JD
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       <div className="flex">
         {/* Sidebar */}
         <aside className="w-64 bg-white border-r border-slate-200 min-h-screen sticky top-16">
@@ -124,7 +186,10 @@ export default function ClientDashboard() {
             </div>
             
             <div className="mt-8 pt-8 border-t border-slate-200">
-              <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+              <button 
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+              >
                 <LogOut className="w-5 h-5" />
                 Logout
               </button>
@@ -137,12 +202,14 @@ export default function ClientDashboard() {
           {activeTab === 'overview' && (
             <div>
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back, John!</h1>
+                <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                  Welcome back, {user?.fullName || 'User'}!
+                </h1>
                 <p className="text-slate-600">Here's what's happening with your consultations</p>
               </div>
 
               {/* Stats Grid */}
-              <div className="grid md:grid-cols-4 gap-6 mb-8">
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
                 {stats.map((stat, idx) => (
                   <div key={idx} className="bg-white rounded-xl p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
@@ -165,14 +232,20 @@ export default function ClientDashboard() {
                   </div>
                 </div>
                 <div className="p-6">
-                  {upcomingConsultations.length > 0 ? (
+                  {loadingBookings ? (
+                    <div className="py-8 text-center text-slate-500">Loading meetings…</div>
+                  ) : upcomingConsultations.length > 0 ? (
                     <div className="space-y-4">
                       {upcomingConsultations.map((consultation) => (
-                        <div key={consultation.id} className="border border-slate-200 rounded-lg p-5 hover:border-blue-300 transition-colors">
+                        <div key={consultation.id} className="border border-slate-200 rounded-lg p-5 hover:border-slate-300 transition-colors">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                              <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl flex items-center justify-center text-2xl">
-                                {consultation.photo}
+                              <div className="w-14 h-14 bg-vk-primary/10 rounded-xl flex items-center justify-center">
+                                {consultation.photo ? (
+                                  <img src={consultation.photo} alt="" className="w-full h-full rounded-xl object-cover" />
+                                ) : (
+                                  <User className="w-7 h-7 text-vk-primary" />
+                                )}
                               </div>
                               <div>
                                 <h3 className="font-semibold text-slate-900 mb-1">{consultation.lawyer}</h3>
@@ -192,14 +265,17 @@ export default function ClientDashboard() {
                             </div>
                             <div className="flex flex-col gap-2">
                               {consultation.date === "Today" && (
-                                <button className="px-5 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors flex items-center gap-2 font-medium">
+                                <button className="px-5 py-2 bg-vk-primary text-white rounded-lg hover:opacity-90 transition-colors flex items-center gap-2 font-medium">
                                   <PlayCircle className="w-4 h-4" />
                                   Join Now
                                 </button>
                               )}
-                              <button className="px-5 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors">
-                                View Details
-                              </button>
+                              <Link
+                                href={`/advocates/${consultation.lawyerId}`}
+                                className="px-5 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors text-center"
+                              >
+                                View advocate
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -208,10 +284,13 @@ export default function ClientDashboard() {
                   ) : (
                     <div className="text-center py-12">
                       <Calendar className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                      <p className="text-slate-600">No upcoming consultations</p>
-                      <button className="mt-4 px-6 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors">
-                        Book a Consultation
-                      </button>
+                      <p className="text-slate-600">No upcoming meetings</p>
+                      <Link
+                        href="/advocates"
+                        className="mt-4 inline-block px-6 py-2 bg-vk-primary text-white rounded-lg hover:opacity-90 transition-colors"
+                      >
+                        Book a consultation
+                      </Link>
                     </div>
                   )}
                 </div>
@@ -221,10 +300,10 @@ export default function ClientDashboard() {
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <div className="bg-gradient-to-br from-blue-900 to-blue-700 rounded-xl p-6 text-white">
                   <h3 className="text-xl font-semibold mb-2">Need Legal Help?</h3>
-                  <p className="text-blue-100 mb-4">Connect with verified lawyers instantly</p>
-                  <button className="px-5 py-2 bg-white text-blue-900 rounded-lg hover:bg-blue-50 transition-colors font-medium">
-                    Find a Lawyer
-                  </button>
+                  <p className="text-blue-100 mb-4">Connect with verified advocates instantly</p>
+                  <Link href="/advocates" className="inline-block px-5 py-2 bg-white text-blue-900 rounded-lg hover:bg-blue-50 transition-colors font-medium">
+                    Find an Advocate
+                  </Link>
                 </div>
                 <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-6 text-white">
                   <h3 className="text-xl font-semibold mb-2">Refer & Earn</h3>
@@ -282,7 +361,7 @@ export default function ClientDashboard() {
                       Upcoming ({upcomingConsultations.length})
                     </button>
                     <button className="px-4 py-4 font-medium text-slate-600 hover:text-slate-900">
-                      Past ({pastConsultations.length})
+                      Past ({pastConsultationsList.length})
                     </button>
                     <button className="px-4 py-4 font-medium text-slate-600 hover:text-slate-900">
                       Cancelled (0)
@@ -296,8 +375,12 @@ export default function ClientDashboard() {
                       <div key={consultation.id} className="border border-slate-200 rounded-xl p-6">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl flex items-center justify-center text-3xl">
-                              {consultation.photo}
+                            <div className="w-16 h-16 bg-vk-primary/10 rounded-xl flex items-center justify-center">
+                              {consultation.photo ? (
+                                <img src={consultation.photo} alt="" className="w-full h-full rounded-xl object-cover" />
+                              ) : (
+                                <User className="w-8 h-8 text-vk-primary" />
+                              )}
                             </div>
                             <div>
                               <h3 className="text-lg font-semibold text-slate-900 mb-1">{consultation.lawyer}</h3>
@@ -333,7 +416,7 @@ export default function ClientDashboard() {
 
                         <div className="flex items-center gap-3">
                           {consultation.date === "Today" && (
-                            <button className="flex-1 px-5 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors flex items-center justify-center gap-2 font-medium">
+                            <button className="flex-1 px-5 py-3 bg-vk-primary text-white rounded-lg hover:opacity-90 transition-colors flex items-center justify-center gap-2 font-medium">
                               <PlayCircle className="w-5 h-5" />
                               Join Consultation
                             </button>

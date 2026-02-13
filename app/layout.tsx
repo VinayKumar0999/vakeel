@@ -19,6 +19,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  //console.log("RootLayout",children);
   return (
     <html lang="en">
       <body>
@@ -27,8 +28,8 @@ export default function RootLayout({
           <Toaster />
         </Providers> */}
         <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
+        <main className="min-h-screen">{children}</main>
+        <Footer />
       </body>
     </html>
   );

@@ -1,126 +1,148 @@
 "use client";
-import React, { useState } from 'react';
-import { Search, SlidersHorizontal, MapPin, Star, Video, Clock, ChevronDown, X, Filter } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Search, SlidersHorizontal, MapPin, Star, Video, Clock, ChevronDown, X, Filter, Loader2, User } from 'lucide-react';
+import { lawyerAPI } from '@/lib/api';
+import toast from 'react-hot-toast';
+import Image from 'next/image';
+
+interface Lawyer {
+  id: string;
+  name: string;
+  photo: string | null;
+  expertise: string[];
+  specializations: string[];
+  experience: string;
+  experienceYears: number;
+  languages: string[];
+  location: string;
+  city: string;
+  state: string;
+  rating: number;
+  reviews: number;
+  fee: number;
+  bio: string;
+  barCouncil: string;
+  available: boolean;
+}
 
 export default function LawyerListingPage() {
+  const router = useRouter();
   const [showFilters, setShowFilters] = useState(true);
-  const [selectedExpertise, setSelectedExpertise] = useState<any>([]);
-  const [selectedLanguages, setSelectedLanguages] = useState<any>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [experienceRange, setExperienceRange] = useState([0, 30]);
+  const [minRating, setMinRating] = useState<string>('');
   const [sortBy, setSortBy] = useState('relevance');
+  const [lawyers, setLawyers] = useState<Lawyer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [allExpertiseAreas, setAllExpertiseAreas] = useState<string[]>([]);
+  const [allLanguages, setAllLanguages] = useState<string[]>([]);
 
-  const expertiseAreas = ['Family Law', 'Criminal Law', 'Corporate Law', 'Property Law', 'Civil Law', 'Consumer Law'];
-  const languages = ['English', 'Hindi', 'Telugu', 'Tamil', 'Malayalam', 'Kannada'];
+  // Fetch lawyers with filters
+  const fetchLawyers = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const params: any = {
+        sortBy,
+      };
 
-  const lawyers = [
-    {
-      id: 1,
-      name: "Adv. Rajesh Kumar",
-      photo: "👨‍⚖️",
-      expertise: ["Corporate Law", "Property Law"],
-      experience: 15,
-      languages: ["English", "Hindi", "Telugu"],
-      location: "Hyderabad, Telangana",
-      rating: 4.9,
-      reviews: 127,
-      fee: 1500,
-      available: true,
-      barCouncil: "TN/12345/2008"
-    },
-    {
-      id: 2,
-      name: "Adv. Priya Sharma",
-      photo: "👩‍⚖️",
-      expertise: ["Family Law", "Criminal Law"],
-      experience: 12,
-      languages: ["English", "Hindi"],
-      location: "Mumbai, Maharashtra",
-      rating: 4.8,
-      reviews: 95,
-      fee: 2000,
-      available: true,
-      barCouncil: "MH/98765/2011"
-    },
-    {
-      id: 3,
-      name: "Adv. Vikram Mehta",
-      photo: "👨‍⚖️",
-      expertise: ["Civil Law", "Consumer Law"],
-      experience: 20,
-      languages: ["English", "Hindi", "Gujarati"],
-      location: "Delhi NCR",
-      rating: 4.7,
-      reviews: 203,
-      fee: 2500,
-      available: false,
-      barCouncil: "DL/45678/2003"
-    },
-    {
-      id: 4,
-      name: "Adv. Meera Krishnan",
-      photo: "👩‍⚖️",
-      expertise: ["Property Law", "Civil Law"],
-      experience: 8,
-      languages: ["English", "Tamil", "Malayalam"],
-      location: "Chennai, Tamil Nadu",
-      rating: 4.9,
-      reviews: 64,
-      fee: 1200,
-      available: true,
-      barCouncil: "TN/23456/2015"
+      if (searchQuery.trim()) params.search = searchQuery.trim();
+      if (selectedExpertise.length > 0) params.practiceArea = selectedExpertise.join(",");
+      if (selectedLanguages.length > 0) params.language = selectedLanguages.join(",");
+      if (priceRange[1] < 5000) params.maxFee = priceRange[1].toString();
+      if (experienceRange[1] > 0) params.minExperience = experienceRange[1].toString();
+      if (minRating) params.minRating = minRating;
+
+      const response = await lawyerAPI.getAll(params);
+      const lawyersData = response.data.data || [];
+
+      // Extract unique expertise areas and languages from all lawyers
+      const expertiseSet = new Set<string>();
+      const languagesSet = new Set<string>();
+      lawyersData.forEach((lawyer: Lawyer) => {
+        lawyer.expertise?.forEach(exp => expertiseSet.add(exp));
+        lawyer.languages?.forEach(lang => languagesSet.add(lang));
+      });
+      setAllExpertiseAreas(Array.from(expertiseSet).sort());
+      setAllLanguages(Array.from(languagesSet).sort());
+
+      setLawyers(lawyersData);
+    } catch (error: any) {
+      console.error('Error fetching lawyers:', error);
+      toast.error('Failed to load lawyers. Please try again.');
+      setLawyers([]);
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  }, [searchQuery, selectedExpertise, selectedLanguages, priceRange, experienceRange, minRating, sortBy]);
 
-  const toggleExpertise = (exp:any) => {
-    setSelectedExpertise((prev:any) =>
-      prev.includes(exp) ? prev.filter((e:any) => e !== exp) : [...prev, exp]
+  useEffect(() => {
+    fetchLawyers();
+  }, [fetchLawyers]);
+
+  const toggleExpertise = (exp: string) => {
+    setSelectedExpertise((prev) =>
+      prev.includes(exp) ? prev.filter((e) => e !== exp) : [...prev, exp]
     );
   };
 
   const toggleLanguage = (lang: string) => {
-    setSelectedLanguages((prev:string[]) =>
-      prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]
+    setSelectedLanguages((prev) =>
+      prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
     );
+  };
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedExpertise([]);
+    setSelectedLanguages([]);
+    setPriceRange([0, 5000]);
+    setExperienceRange([0, 30]);
+    setMinRating('');
+    setSortBy('relevance');
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchLawyers();
   };
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold text-blue-900">Vakeel Kutami</div>
-            <div className="flex items-center gap-4">
-              <button className="px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg">Dashboard</button>
-              <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center text-white font-semibold">
-                JD
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Search Bar */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex gap-4">
+          <form onSubmit={handleSearch} className="flex gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search by lawyer name, expertise, or location..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              type="submit"
               className="px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors flex items-center gap-2"
+            >
+              <Search className="w-5 h-5" />
+              Search
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowFilters(!showFilters)}
+              className="px-6 py-3 bg-white border-2 border-blue-900 text-blue-900 rounded-lg hover:bg-blue-50 transition-colors flex items-center gap-2"
             >
               <SlidersHorizontal className="w-5 h-5" />
               Filters
             </button>
-          </div>
+          </form>
         </div>
       </div>
 
@@ -132,42 +154,55 @@ export default function LawyerListingPage() {
               <div className="bg-white rounded-xl p-6 shadow-sm sticky top-24">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-semibold text-lg text-slate-900">Filters</h3>
-                  <button className="text-sm text-blue-900 hover:underline">Clear All</button>
+                  <button
+                    onClick={clearFilters}
+                    className="text-sm text-blue-900 hover:underline"
+                  >
+                    Clear All
+                  </button>
                 </div>
 
                 {/* Expertise */}
                 <div className="mb-6">
-                  <h4 className="font-medium text-slate-900 mb-3">Expertise</h4>
-                  <div className="space-y-2">
-                    {expertiseAreas.map(exp => (
-                      <label key={exp} className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={selectedExpertise.includes(exp)}
-                          onChange={() => toggleExpertise(exp)}
-                          className="w-4 h-4 text-blue-900 rounded focus:ring-2 focus:ring-blue-500"
-                        />
-                        <span className="text-sm text-slate-700">{exp}</span>
-                      </label>
-                    ))}
+                  <h4 className="font-medium text-slate-900 mb-3">Practice Areas</h4>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {allExpertiseAreas.length > 0 ? (
+                      allExpertiseAreas.map((exp) => (
+                        <label key={exp} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedExpertise.includes(exp)}
+                            onChange={() => toggleExpertise(exp)}
+                            className="w-4 h-4 text-blue-900 rounded focus:ring-2 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-slate-700">{exp}</span>
+                        </label>
+                      ))
+                    ) : (
+                      <p className="text-sm text-slate-500">No practice areas available</p>
+                    )}
                   </div>
                 </div>
 
                 {/* Languages */}
                 <div className="mb-6">
                   <h4 className="font-medium text-slate-900 mb-3">Languages</h4>
-                  <div className="space-y-2">
-                    {languages.map(lang => (
-                      <label key={lang} className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={selectedLanguages.includes(lang)}
-                          onChange={() => toggleLanguage(lang)}
-                          className="w-4 h-4 text-blue-900 rounded focus:ring-2 focus:ring-blue-500"
-                        />
-                        <span className="text-sm text-slate-700">{lang}</span>
-                      </label>
-                    ))}
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {allLanguages.length > 0 ? (
+                      allLanguages.map((lang) => (
+                        <label key={lang} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedLanguages.includes(lang)}
+                            onChange={() => toggleLanguage(lang)}
+                            className="w-4 h-4 text-blue-900 rounded focus:ring-2 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-slate-700">{lang}</span>
+                        </label>
+                      ))
+                    ) : (
+                      <p className="text-sm text-slate-500">No languages available</p>
+                    )}
                   </div>
                 </div>
 
@@ -210,9 +245,25 @@ export default function LawyerListingPage() {
                 <div className="mb-6">
                   <h4 className="font-medium text-slate-900 mb-3">Minimum Rating</h4>
                   <div className="space-y-2">
-                    {[5, 4, 3].map(rating => (
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="rating"
+                        checked={minRating === ''}
+                        onChange={() => setMinRating('')}
+                        className="w-4 h-4 text-blue-900"
+                      />
+                      <span className="text-sm text-slate-700">Any rating</span>
+                    </label>
+                    {[5, 4, 3].map((rating) => (
                       <label key={rating} className="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="rating" className="w-4 h-4 text-blue-900" />
+                        <input
+                          type="radio"
+                          name="rating"
+                          checked={minRating === rating.toString()}
+                          onChange={() => setMinRating(rating.toString())}
+                          className="w-4 h-4 text-blue-900"
+                        />
                         <div className="flex items-center gap-1">
                           {[...Array(rating)].map((_, i) => (
                             <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
@@ -270,16 +321,48 @@ export default function LawyerListingPage() {
             </div>
 
             {/* Lawyer Cards */}
-            <div className="space-y-4">
-              {lawyers.map(lawyer => (
-                <div key={lawyer.id} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex gap-6">
-                    {/* Profile Photo */}
-                    <div className="flex-shrink-0">
-                      <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl flex items-center justify-center text-5xl">
-                        {lawyer.photo}
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <Loader2 className="w-12 h-12 animate-spin text-blue-900 mx-auto mb-4" />
+                  <p className="text-slate-600">Loading lawyers...</p>
+                </div>
+              </div>
+            ) : lawyers.length === 0 ? (
+              <div className="bg-white rounded-xl p-12 text-center">
+                <Search className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">No lawyers found</h3>
+                <p className="text-slate-600 mb-4">Try adjusting your search or filters</p>
+                <button
+                  onClick={clearFilters}
+                  className="px-6 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {lawyers.map((lawyer) => (
+                  <div key={lawyer.id} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex gap-6">
+                      {/* Profile Photo */}
+                      <div className="flex-shrink-0">
+                        {lawyer.photo ? (
+                          <div className="w-24 h-24 rounded-xl overflow-hidden bg-gradient-to-br from-blue-100 to-blue-50">
+                            <Image
+                              src={lawyer.photo}
+                              alt={lawyer.name}
+                              width={96}
+                              height={96}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl flex items-center justify-center">
+                            <User className="w-12 h-12 text-blue-600" />
+                          </div>
+                        )}
                       </div>
-                    </div>
 
                     {/* Details */}
                     <div className="flex-1">
@@ -292,7 +375,7 @@ export default function LawyerListingPage() {
                               {lawyer.location}
                             </span>
                             <span>•</span>
-                            <span>{lawyer.experience} years exp.</span>
+                            <span>{lawyer.experience} exp.</span>
                           </div>
                         </div>
                         {lawyer.available && (
@@ -337,27 +420,27 @@ export default function LawyerListingPage() {
                           </div>
                         </div>
                         <div className="flex gap-3">
-                          <button className="px-5 py-2 border-2 border-blue-900 text-blue-900 rounded-lg hover:bg-blue-50 transition-colors">
+                          <Link
+                            href={`/lawers/${lawyer.id}`}
+                            className="px-5 py-2 border-2 border-blue-900 text-blue-900 rounded-lg hover:bg-blue-50 transition-colors"
+                          >
                             View Profile
-                          </button>
-                          <button className="px-5 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors flex items-center gap-2">
+                          </Link>
+                          <Link
+                            href={`/book/${lawyer.id}`}
+                            className="px-5 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition-colors flex items-center gap-2"
+                          >
                             <Video className="w-4 h-4" />
                             Book Now
-                          </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Load More */}
-            <div className="text-center mt-8">
-              <button className="px-8 py-3 bg-white border-2 border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors">
-                Load More Lawyers
-              </button>
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
