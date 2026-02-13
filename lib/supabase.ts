@@ -72,7 +72,9 @@ async function serverFetchWithTimeout(input: RequestInfo | URL, init?: RequestIn
 function createServerClientInstance(): SupabaseClient {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!serviceRoleKey) {
-    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY')
+    throw new Error(
+      'Missing SUPABASE_SERVICE_ROLE_KEY. Set it in your deployment environment (e.g. Vercel: Project → Settings → Environment Variables). Get the key from Supabase Dashboard → Project Settings → API → service_role secret.'
+    )
   }
   const supabaseUrl = getSupabaseUrl()
   return createClient(supabaseUrl, serviceRoleKey, {
